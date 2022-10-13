@@ -25,6 +25,7 @@ The version is specified in `.nvmrc`, currently 16.17.1
 
 > These steps might be optional, maybe they aren't needed anymore since I set it all up once.
 
-### Run the development server
+### Run the development server and redis
 
-`./bin/dev` (watch out for error messages when starting the server about `yarn`, `tailwind`, or `esbuild` commands missing. See steps above.
+- `docker run --name kouress-redis -p 6379:6379 redis`
+- `./bin/dev` (watch out for error messages when starting the server about `yarn`, `tailwind`, or `esbuild` commands missing. See steps above.

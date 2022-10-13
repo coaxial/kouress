@@ -1,7 +1,9 @@
 class User < ApplicationRecord
     has_secure_password
 
-    attr_accessible :email, :username, :password_confirmation
+    def permitted_params
+        params.require(:user).permit(:email, :username, :password, :password_confirmation)
+    end
 
-    validates_uniqueness: :email, :username
+    validates :email, :username, uniqueness: true
 end
