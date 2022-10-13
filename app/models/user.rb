@@ -5,5 +5,5 @@ class User < ApplicationRecord
         params.require(:user).permit(:email, :username, :password, :password_confirmation)
     end
 
-    validates :email, :username, uniqueness: true
+    validates :email, :username, uniqueness: true, presence: true
 end
