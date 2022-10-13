@@ -30,4 +30,10 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  application:
+    authorize:
+      not_authorized: "Operation requires authorization."
+  session:
+    create:
+      success: "Login successful."
+      failure: "Invalid credentials or user not found."

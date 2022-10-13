@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   get 'home', to: 'site#home', as: 'home'
   get 'new_user', to: 'users#new', as: 'new_user'
@@ -9,5 +11,5 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
-  root "site#home"
+  root 'site#home'
 end

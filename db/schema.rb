@@ -15,8 +15,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_131001) do
     t.string "username"
     t.string "email"
     t.string "password_digest"
+    t.boolean "is_admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
 end

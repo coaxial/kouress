@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   before_action :authorize
 
@@ -11,7 +13,7 @@ class UsersController < ApplicationController
       session[:user_id] = @user.id
       redirect_to root_url, notice: "User #{@user.username} created"
     else
-      render "new"
+      render 'new'
     end
   end
 
