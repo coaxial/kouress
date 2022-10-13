@@ -1,21 +1,17 @@
-<div>
-  <div>
-    <h1 class="title">Log in</h1>
-  </div>
-  
-  <div>
-    <%= form_tag sessions_path do %>
-      <div class="field">
-        <%= label_tag :username %>
-        <%= text_field_tag :email, params[:email] %>
-      </div>
-      <div class="field">
-        <%= label_tag :password %>
-        <%= password_field_tag :password %>
-      </div>
-      <div class="actions">
-        <%= submit_tag "Log In" %>
-      </div>
-    <% end %>
-  </div>
+<div class="flex justify-center place-items-center">
+  <h1 class="title"><%= t('.title') %></h1>
+
+  <%= form_with url: sessions_path do |form| %>
+    <div class="field">
+      <%= form.label :username %>
+      <%= form.text_field :username %>
+    </div>
+    <div class="field">
+      <%= form.label :password %>
+      <%= form.password_field :password %>
+    </div>
+    <div class="actions">
+      <%= form.submit t('.log_in') %>
+    </div>
+  <% end %>
 </div>

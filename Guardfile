@@ -26,7 +26,7 @@
 #  * zeus: 'zeus rspec' (requires the server to be started separately)
 #  * 'just' rspec: 'rspec'
 
-guard :rubocop, cli: ['--autocorrect', '--display-cop-names'] do
+guard :rubocop, cli: ['--autocorrect-all', '--display-cop-names'] do
   watch('Gemfile')
   watch(%r{^(?!node_modules/).+\.rb$})
   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }

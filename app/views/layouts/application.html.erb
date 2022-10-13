@@ -12,17 +12,7 @@
   </head>
 
   <body>
-    <div class="flex justify-end">
-      <% if current_user %>
-        Logged in as <%= current_user.email %>
-        <%= link_to "Log out", logout_path %>
-      <% else %>
-        <%= link_to "Log in", login_path %>
-      <% end %>
-    </div>
-
-    <div>
-      <%= yield %>
-    </div>
+    <%= render 'shared/error_messages' %>
+    <%= yield %>
   </body>
 </html>
