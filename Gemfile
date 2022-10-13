@@ -64,6 +64,10 @@ group :development do
 
   gem "hotwire-livereload"
 
+  gem "guard"
+
+  gem "guard-rspec", require: false
+
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"
 
