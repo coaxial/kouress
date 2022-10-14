@@ -1,0 +1,62 @@
+---
+require:
+  - rubocop-rspec
+  - rubocop-rails
+
+AllCops:
+  AutoCorrect: true
+  Exclude:
+    - "bin/*"
+    - "db/schema.rb"
+    - "node_modules/**/*"
+    - "vendor/bundle/**/*" # when running on GH Actions
+  NewCops: enable
+  TargetRubyVersion: 3.1
+
+Layout/LineLength:
+  Exclude:
+    - "db/migrate/*.rb"
+  Severity: warning
+
+Metrics/BlockLength:
+  Exclude:
+    - Guardfile
+    - "db/migrate/*.rb"
+    - "spec/**/*"
+
+Metrics/MethodLength:
+  Exclude:
+    - "db/migrate/*.rb"
+
+Metrics/AbcSize:
+  Exclude:
+    - "db/migrate/*.rb"
+
+Style/Documentation:
+  Exclude:
+    - "db/migrate/*.rb"
+    - "config/**/*.rb"
+    - "app/helpers/**/*.rb"
+    - "app/controllers/**/*.rb"
+    - "app/models/**/*.rb"
+
+Style/ClassAndModuleChildren:
+  AutoCorrect: true
+
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/requests/**/*_spec.rb"
+    - "spec/features/**/*_spec.rb"
+    - "spec/system/**/*_spec.rb"
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/ExampleLength:
+  Max: 8
+
+Style/FrozenStringLiteralComment:
+  AutoCorrect: true

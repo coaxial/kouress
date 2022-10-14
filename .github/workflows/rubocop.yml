@@ -1,0 +1,29 @@
+name: RuboCop
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Ruby 3.1
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+
+      - name: Run migrations
+        run: bin/rails db:migrate RAILS_ENV=test
+
+      - name: Run RuboCop
+        run: bundle exec rubocop --config .rubocop.yml --parallel

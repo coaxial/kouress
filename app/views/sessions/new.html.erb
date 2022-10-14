@@ -1,0 +1,17 @@
+<div class="flex justify-center place-items-center">
+  <h1 class="title"><%= t('.title') %></h1>
+
+  <%= form_with url: sessions_path do |form| %>
+    <div class="field">
+      <%= form.label :username %>
+      <%= form.text_field :username %>
+    </div>
+    <div class="field">
+      <%= form.label :password %>
+      <%= form.password_field :password %>
+    </div>
+    <div class="actions">
+      <%= form.submit t('.log_in') %>
+    </div>
+  <% end %>
+</div>

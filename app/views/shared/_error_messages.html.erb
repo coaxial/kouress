@@ -1,0 +1,9 @@
+<% unless flash.empty? %>
+  <div>
+    <ul>
+      <li class="bg-red-500"><%= flash[:alert] %></li>
+      <li class="bg-yellow-500"><%= flash[:warning] %></li>
+      <li class="bg-emerald-500"><%= flash[:notice] %></li>
+    </ul>
+  </div>
+<% end %>
