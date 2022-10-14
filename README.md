@@ -20,12 +20,13 @@ The version is specified in `.nvmrc`, currently 16.17.1
 - Switch nodejs versions with `nvm use`
 - Enable `corepack` with `corepack enable`
 - Install JS dependencies: `yarn install`
-- Install turbo-rails: `bundle install && rails turbo:install` (`rails turbo:install:redis`?)
-- Install stimulus: `rails stimulus:install`
-
-> These steps might be optional, maybe they aren't needed anymore since I set it all up once.
 
 ### Run the development server and redis
 
-- `docker run --name kouress-redis -p 6379:6379 redis`
+- `docker run --rm --name kouress-redis -p 6379:6379 redis` (for live reloading)
 - `./bin/dev` (watch out for error messages when starting the server about `yarn`, `tailwind`, or `esbuild` commands missing. See steps above.
+- `bundle exec guard` for RuboCop and RSpec on watch.
+
+### Debugging
+
+Use `debugger` anywhere to start an interactive console in the code's context.
