@@ -93,4 +93,11 @@ RSpec.configure do |config|
   #   # test failures related to randomization by passing the same `--seed` value
   #   # as the one that triggered the failure.
   #   Kernel.srand config.seed
+
+  # Enable :focus tag, but fail CI if forgotten
+  config.filter_run focus: true
+  config.run_all_when_everything_filtered = true
+  config.before focused: true do
+    raise "Don't commit focused specs." if ENV['FORBID_FOCUSED_SPECS']
+  end
 end
