@@ -40,3 +40,6 @@ en:
     new:
       log_in: "Log in"
       title: "Log in"
+  users:
+    admin_only:
+      not_admin: "Only administrators can access this page."
