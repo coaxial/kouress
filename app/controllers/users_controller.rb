@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :admin_only
+  before_action :admin_only, except: :edit
+  before_action :self_or_admin_only, only: :edit
 
   def new
     @user = User.new
@@ -21,11 +22,20 @@ class UsersController < ApplicationController
     @users = User.all
   end
 
-  def edit; end
+  def edit
+    @user = User.find(params[:id])
+  end
 
   private
 
   def admin_only
     redirect_to login_url, alert: t('users.admin_only.not_admin') unless @current_user.is_admin
+  end
+
+  def self_or_admin_only
+    unless @current_user.id == params[:id].to_i || @current_user.is_admin
+      redirect_to login_url,
+                  alert: t('users.admin_only.not_admin')
+    end
   end
 end

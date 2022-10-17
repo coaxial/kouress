@@ -13,6 +13,34 @@ RSpec.describe 'Users', type: :request do
         expect(response).to redirect_to(login_path)
       end
     end
+
+    context 'when logged in as a user' do
+      before do
+        user = create(:user)
+        post sessions_path, params: { username: user.username,
+                                      password: user.password }
+
+        get users_path
+      end
+
+      it 'redirects to the login page' do
+        expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        admin = create(:admin)
+        post sessions_path, params: { username: admin.username,
+                                      password: admin.password }
+
+        get users_path
+      end
+
+      it 'shows the management page' do
+        expect(response).to render_template(:index)
+      end
+    end
   end
 
   describe 'POST /users' do
@@ -23,6 +51,34 @@ RSpec.describe 'Users', type: :request do
 
       it 'redirects to the login page' do
         expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as a user' do
+      before do
+        user = create(:user)
+        post sessions_path, params: { username: user.username,
+                                      password: user.password }
+
+        post users_path
+      end
+
+      it 'redirects to the login page' do
+        expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        admin = create(:admin)
+        post sessions_path, params: { username: admin.username,
+                                      password: admin.password }
+
+        post users_path
+      end
+
+      it 'shows the management page' do
+        expect(response).to render_template(:new)
       end
     end
   end
@@ -37,6 +93,34 @@ RSpec.describe 'Users', type: :request do
         expect(response).to redirect_to(login_path)
       end
     end
+
+    context 'when logged in as a user' do
+      before do
+        user = create(:user)
+        post sessions_path, params: { username: user.username,
+                                      password: user.password }
+
+        get new_user_path
+      end
+
+      it 'redirects to the login page' do
+        expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        admin = create(:admin)
+        post sessions_path, params: { username: admin.username,
+                                      password: admin.password }
+
+        get new_user_path
+      end
+
+      it 'shows the management page' do
+        expect(response).to render_template(:new)
+      end
+    end
   end
 
   describe 'EDIT /users/:id/edit' do
@@ -48,6 +132,49 @@ RSpec.describe 'Users', type: :request do
 
       it 'redirects to the login page' do
         expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as another user' do
+      before do
+        users = create_list(:user, 2)
+        post sessions_path, params: { username: users[0].username,
+                                      password: users[0].password }
+
+        get edit_user_path(users[1])
+      end
+
+      it 'redirects to the login page' do
+        expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as the user' do
+      before do
+        users = create_list(:user, 2)
+        post sessions_path, params: { username: users[0].username,
+                                      password: users[0].password }
+
+        get edit_user_path(users[0])
+      end
+
+      it 'shows the edit page' do
+        expect(response).to render_template(:edit)
+      end
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        user = create(:user)
+        admin = create(:admin)
+        post sessions_path, params: { username: admin.username,
+                                      password: admin.password }
+
+        get edit_user_path(user)
+      end
+
+      it 'shows the management page' do
+        expect(response).to render_template(:edit)
       end
     end
   end
