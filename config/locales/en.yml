@@ -42,4 +42,6 @@ en:
       title: "Log in"
   users:
     admin_only:
-      not_admin: "Only administrators can access this page."
+      failure: "Only administrators can access this page."
+    self_or_admin_only:
+      failure: "Only administrators or the corresponding user can access this page."

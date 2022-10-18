@@ -29,13 +29,14 @@ class UsersController < ApplicationController
   private
 
   def admin_only
-    redirect_to login_url, alert: t('users.admin_only.not_admin') unless @current_user.is_admin
+    return if @current_user.is_admin
+
+    redirect_to login_url, alert: t('users.admin_only.failure')
   end
 
   def self_or_admin_only
-    unless @current_user.id == params[:id].to_i || @current_user.is_admin
-      redirect_to login_url,
-                  alert: t('users.admin_only.not_admin')
-    end
+    return if @current_user.id == params[:id].to_i || @current_user.is_admin
+
+    redirect_to login_url, alert: t('users.self_or_admin_only.failure')
   end
 end

@@ -38,7 +38,7 @@ RSpec.describe 'ManageUsers', type: :feature do
     it 'shows an error' do
       visit users_path
 
-      expect(page).to have_text I18n.t('users.admin_only.not_admin')
+      expect(page).to have_text I18n.t('users.admin_only.failure')
     end
 
     it 'doesn\'t show the user list' do
