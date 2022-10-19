@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'EditUsers', type: :feature do
+  let(:submit_label) { 'shared.users.form.update' }
+
   context 'when user is not an admin' do
     before do
       user = create(:user)
@@ -15,15 +17,13 @@ RSpec.describe 'EditUsers', type: :feature do
     end
 
     it 'can update email' do
-      fill_in 'Email', with: 'newemail@example.org'
-      click_button I18n.t('shared.users.form.update')
+      fill_form({ Email: 'newemail@example.org' }, submit_label)
 
       expect(page).to have_text(I18n.t('users.update.success'))
     end
 
     it 'can update password' do
-      fill_in 'Password', with: 'evenbetterpassword'
-      click_button I18n.t('shared.users.form.update')
+      fill_form({ Password: 'evenbetterpassword' }, submit_label)
 
       expect(page).to have_text(I18n.t('users.update.success'))
     end
@@ -42,15 +42,13 @@ RSpec.describe 'EditUsers', type: :feature do
     end
 
     it 'can update email' do
-      fill_in 'Email', with: 'newemail@example.org'
-      click_button I18n.t('shared.users.form.update')
+      fill_form({ Email: 'newemail@example.org' }, submit_label)
 
       expect(page).to have_text(I18n.t('users.update.success'))
     end
 
     it 'can update password' do
-      fill_in 'Password', with: 'evenbetterpassword'
-      click_button I18n.t('shared.users.form.update')
+      fill_form({ Password: 'evenbetterpassword' }, submit_label)
 
       expect(User.find(@user.id).authenticate('evenbetterpassword')).to be_truthy
     end
@@ -59,8 +57,7 @@ RSpec.describe 'EditUsers', type: :feature do
       user = create(:user)
       visit edit_user_path(user)
 
-      fill_in 'Email', with: 'changedagain@example.org'
-      click_button I18n.t('shared.users.form.update')
+      fill_form({ Email: 'changedagain@example.org' }, submit_label)
 
       expect(User.find(user.id).authenticate(user.password)).to be_truthy
     end
