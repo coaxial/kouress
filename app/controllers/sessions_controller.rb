@@ -25,7 +25,7 @@ class SessionsController < ApplicationController
       redirect_to root_url, notice: t('.success')
     else
       flash.now.alert = t('.failure')
-      render 'new', stats: :unprocessable_entity
+      render 'new', status: :unprocessable_entity
     end
   end
 end

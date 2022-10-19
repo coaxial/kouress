@@ -33,6 +33,10 @@ en:
   application:
     authorize:
       not_authorized: "Operation requires authorization."
+  shared:
+    users:
+      form:
+        update: "Update"
   sessions:
     create:
       success: "Login successful."
@@ -49,7 +53,5 @@ en:
       failure: "Only administrators or the corresponding user can access this page."
     new:
       create: "Create"
-    edit:
-      update: "Update"
     update:
       success: "Information updated"

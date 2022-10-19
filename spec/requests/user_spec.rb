@@ -204,6 +204,16 @@ RSpec.describe 'Users', type: :request do
 
         expect(User.find(@user.id).is_admin).to be !@user.is_admin
       end
+
+      it 'can update a user\'s password' do
+        password = 'newpassword'
+
+        patch user_path(@user), params: { user: { password:,
+                                                  password_confirmation:
+                                                  password } }
+
+        expect(User.find(@user.id).authenticate(password)).to be_truthy
+      end
     end
 
     context 'when logged in as a user' do
@@ -216,6 +226,16 @@ RSpec.describe 'Users', type: :request do
         patch user_path(@user), params: { user: { is_admin: !@user.is_admin } }
 
         expect(User.find(@user.id).is_admin).to be @user.is_admin
+      end
+
+      it 'can update its password' do
+        password = 'newpassword'
+
+        patch user_path(@user), params: { user: { password:,
+                                                  password_confirmation:
+                                                  password } }
+
+        expect(User.find(@user.id).authenticate(password)).to be_truthy
       end
     end
   end
