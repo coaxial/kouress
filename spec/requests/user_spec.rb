@@ -20,9 +20,7 @@ RSpec.describe 'Users', type: :request do
 
     context 'when logged in as a user' do
       before do
-        user = create(:user)
-        post sessions_path, params: { username: user.username,
-                                      password: user.password }
+        login user
 
         get new_user_path
       end
@@ -34,9 +32,7 @@ RSpec.describe 'Users', type: :request do
 
     context 'when logged in as an admin' do
       before do
-        admin = create(:admin)
-        post sessions_path, params: { username: admin.username,
-                                      password: admin.password }
+        login admin
 
         get new_user_path
       end
@@ -49,9 +45,7 @@ RSpec.describe 'Users', type: :request do
 
   describe 'GET /users' do
     context 'when not logged in' do
-      before do
-        get users_path
-      end
+      before { get users_path }
 
       it 'redirects to the login page' do
         expect(response).to redirect_to(login_path)
@@ -60,10 +54,7 @@ RSpec.describe 'Users', type: :request do
 
     context 'when logged in as a user' do
       before do
-        user = create(:user)
-        post sessions_path, params: { username: user.username,
-                                      password: user.password }
-
+        login user
         get users_path
       end
 
@@ -74,9 +65,7 @@ RSpec.describe 'Users', type: :request do
 
     context 'when logged in as an admin' do
       before do
-        admin = create(:admin)
         login admin
-
         get users_path
       end
 
@@ -88,10 +77,7 @@ RSpec.describe 'Users', type: :request do
 
   describe 'GET /users/:id/edit' do
     context 'when not logged in' do
-      before do
-        @user = create(:user)
-        get edit_user_path(@user)
-      end
+      before { get edit_user_path(user) }
 
       it 'redirects to the login page' do
         expect(response).to redirect_to(login_path)
@@ -100,11 +86,8 @@ RSpec.describe 'Users', type: :request do
 
     context 'when logged in as another user' do
       before do
-        users = create_list(:user, 2)
-        post sessions_path, params: { username: users[0].username,
-                                      password: users[0].password }
-
-        get edit_user_path(users[1])
+        login user
+        get edit_user_path(other_user)
       end
 
       it 'redirects to the login page' do
@@ -114,11 +97,8 @@ RSpec.describe 'Users', type: :request do
 
     context 'when logged in as the user' do
       before do
-        users = create_list(:user, 2)
-        post sessions_path, params: { username: users[0].username,
-                                      password: users[0].password }
-
-        get edit_user_path(users[0])
+        login user
+        get edit_user_path(user)
       end
 
       it 'shows the edit page' do
@@ -128,11 +108,7 @@ RSpec.describe 'Users', type: :request do
 
     context 'when logged in as an admin' do
       before do
-        user = create(:user)
-        admin = create(:admin)
-        post sessions_path, params: { username: admin.username,
-                                      password: admin.password }
-
+        login admin
         get edit_user_path(user)
       end
 
@@ -144,9 +120,7 @@ RSpec.describe 'Users', type: :request do
 
   describe 'PATCH /users/:id' do
     context 'when logged in as an admin' do
-      before do
-        login admin
-      end
+      before { login admin }
 
       it 'can change the admin flag' do
         patch user_path(user), params: { user: { is_admin: !user.is_admin } }
@@ -185,18 +159,16 @@ RSpec.describe 'Users', type: :request do
       end
 
       it "can't update another user's attributes" do
-        other_user = create(:user)
-
         get user_path(other_user)
+
+        expect(response).to redirect_to login_path
       end
     end
   end
 
   describe 'GET /users/:id' do
     context 'when logged in as a user' do
-      before do
-        login user
-      end
+      before { login user }
 
       it 'can see its own profile' do
         get user_path(user)
@@ -205,8 +177,6 @@ RSpec.describe 'Users', type: :request do
       end
 
       it "can't see another user's profile" do
-        other_user = create(:user)
-
         get user_path(other_user)
 
         expect(response).to redirect_to login_path
@@ -219,8 +189,6 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'can see another user\'s profile' do
-        other_user = create(:user)
-
         get user_path(other_user)
 
         expect(response).to render_template(:show)
