@@ -52,6 +52,14 @@ RSpec.describe 'Users', type: :request do
       it 'redirects to the login page' do
         expect(response).to redirect_to(login_path)
       end
+
+      it 'cannot update the is_admin flag' do
+        user = create(:user)
+
+        patch user_path(user), params: { user: { is_admin: true } }
+
+        expect(User.find(user.id).is_admin).to be false
+      end
     end
 
     context 'when logged in as a user' do
@@ -77,7 +85,7 @@ RSpec.describe 'Users', type: :request do
         post users_path
       end
 
-      it 'shows the management page' do
+      it 'shows the create user page' do
         expect(response).to render_template(:new)
       end
     end
@@ -123,7 +131,7 @@ RSpec.describe 'Users', type: :request do
     end
   end
 
-  describe 'EDIT /users/:id/edit' do
+  describe 'GET /users/:id/edit' do
     context 'when not logged in' do
       before do
         @user = create(:user)
@@ -173,8 +181,41 @@ RSpec.describe 'Users', type: :request do
         get edit_user_path(user)
       end
 
-      it 'shows the management page' do
+      it 'shows the edit page' do
         expect(response).to render_template(:edit)
+      end
+    end
+  end
+
+  describe 'PATCH /users/:id' do
+    before do
+      @user = create(:user)
+      @admin = create(:admin)
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        post sessions_path, params: { username: @admin.username,
+                                      password: @admin.password }
+      end
+
+      it 'can change the admin flag' do
+        patch user_path(@user), params: { user: { is_admin: !@user.is_admin } }
+
+        expect(User.find(@user.id).is_admin).to be !@user.is_admin
+      end
+    end
+
+    context 'when logged in as a user' do
+      before do
+        post sessions_path, params: { username: @user.username,
+                                      password: @user.password }
+      end
+
+      it 'cannot change its admin flag' do
+        patch user_path(@user), params: { user: { is_admin: !@user.is_admin } }
+
+        expect(User.find(@user.id).is_admin).to be @user.is_admin
       end
     end
   end
