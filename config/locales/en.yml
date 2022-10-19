@@ -37,6 +37,8 @@ en:
     users:
       form:
         update: "Update"
+      nav:
+        back: "Back to list"
   sessions:
     create:
       success: "Login successful."
@@ -55,3 +57,12 @@ en:
       create: "Create"
     update:
       success: "Information updated"
+    index:
+      edit: "Edit"
+      delete: "Delete"
+      title: "Registered users list"
+      new: "Add new user"
+    show:
+      user: "User"
+    edit:
+      user: "User"

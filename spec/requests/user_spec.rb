@@ -3,93 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Users', type: :request do
-  describe 'GET /users' do
-    context 'when not logged in' do
-      before do
-        get users_path
-      end
-
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
-    end
-
-    context 'when logged in as a user' do
-      before do
-        user = create(:user)
-        post sessions_path, params: { username: user.username,
-                                      password: user.password }
-
-        get users_path
-      end
-
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
-    end
-
-    context 'when logged in as an admin' do
-      before do
-        admin = create(:admin)
-        post sessions_path, params: { username: admin.username,
-                                      password: admin.password }
-
-        get users_path
-      end
-
-      it 'shows the management page' do
-        expect(response).to render_template(:index)
-      end
-    end
-  end
-
-  describe 'POST /users' do
-    context 'when not logged in' do
-      before do
-        post users_path
-      end
-
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
-
-      it 'cannot update the is_admin flag' do
-        user = create(:user)
-
-        patch user_path(user), params: { user: { is_admin: true } }
-
-        expect(User.find(user.id).is_admin).to be false
-      end
-    end
-
-    context 'when logged in as a user' do
-      before do
-        user = create(:user)
-        post sessions_path, params: { username: user.username,
-                                      password: user.password }
-
-        post users_path
-      end
-
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
-    end
-
-    context 'when logged in as an admin' do
-      before do
-        admin = create(:admin)
-        post sessions_path, params: { username: admin.username,
-                                      password: admin.password }
-
-        post users_path
-      end
-
-      it 'shows the create user page' do
-        expect(response).to render_template(:new)
-      end
-    end
-  end
+  let(:admin) { create(:admin) }
+  let(:user) { create(:user) }
+  let(:other_user) { create(:user) }
 
   describe 'GET /new_user' do
     context 'when not logged in' do
@@ -125,8 +41,47 @@ RSpec.describe 'Users', type: :request do
         get new_user_path
       end
 
-      it 'shows the management page' do
+      it 'shows the user creation page' do
         expect(response).to render_template(:new)
+      end
+    end
+  end
+
+  describe 'GET /users' do
+    context 'when not logged in' do
+      before do
+        get users_path
+      end
+
+      it 'redirects to the login page' do
+        expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as a user' do
+      before do
+        user = create(:user)
+        post sessions_path, params: { username: user.username,
+                                      password: user.password }
+
+        get users_path
+      end
+
+      it 'redirects to the login page' do
+        expect(response).to redirect_to(login_path)
+      end
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        admin = create(:admin)
+        login admin
+
+        get users_path
+      end
+
+      it 'shows the users list page' do
+        expect(response).to render_template(:index)
       end
     end
   end
@@ -188,54 +143,87 @@ RSpec.describe 'Users', type: :request do
   end
 
   describe 'PATCH /users/:id' do
-    before do
-      @user = create(:user)
-      @admin = create(:admin)
-    end
-
     context 'when logged in as an admin' do
       before do
-        post sessions_path, params: { username: @admin.username,
-                                      password: @admin.password }
+        login admin
       end
 
       it 'can change the admin flag' do
-        patch user_path(@user), params: { user: { is_admin: !@user.is_admin } }
+        patch user_path(user), params: { user: { is_admin: !user.is_admin } }
 
-        expect(User.find(@user.id).is_admin).to be !@user.is_admin
+        expect(User.find(user.id).is_admin).to be !user.is_admin
       end
 
       it 'can update a user\'s password' do
         password = 'newpassword'
 
-        patch user_path(@user), params: { user: { password:,
-                                                  password_confirmation:
+        patch user_path(user), params: { user: { password:,
+                                                 password_confirmation:
                                                   password } }
 
-        expect(User.find(@user.id).authenticate(password)).to be_truthy
+        expect(User.find(user.id).authenticate(password)).to be_truthy
       end
     end
 
     context 'when logged in as a user' do
-      before do
-        post sessions_path, params: { username: @user.username,
-                                      password: @user.password }
-      end
+      before { login user }
 
       it 'cannot change its admin flag' do
-        patch user_path(@user), params: { user: { is_admin: !@user.is_admin } }
+        patch user_path(user), params: { user: { is_admin: !user.is_admin } }
 
-        expect(User.find(@user.id).is_admin).to be @user.is_admin
+        expect(User.find(user.id).is_admin).to be user.is_admin
       end
 
       it 'can update its password' do
         password = 'newpassword'
 
-        patch user_path(@user), params: { user: { password:,
-                                                  password_confirmation:
+        patch user_path(user), params: { user: { password:,
+                                                 password_confirmation:
                                                   password } }
 
-        expect(User.find(@user.id).authenticate(password)).to be_truthy
+        expect(User.find(user.id).authenticate(password)).to be_truthy
+      end
+
+      it "can't update another user's attributes" do
+        other_user = create(:user)
+
+        get user_path(other_user)
+      end
+    end
+  end
+
+  describe 'GET /users/:id' do
+    context 'when logged in as a user' do
+      before do
+        login user
+      end
+
+      it 'can see its own profile' do
+        get user_path(user)
+
+        expect(response).to render_template(:show)
+      end
+
+      it "can't see another user's profile" do
+        other_user = create(:user)
+
+        get user_path(other_user)
+
+        expect(response).to redirect_to login_path
+      end
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        login admin
+      end
+
+      it 'can see another user\'s profile' do
+        other_user = create(:user)
+
+        get user_path(other_user)
+
+        expect(response).to render_template(:show)
       end
     end
   end
