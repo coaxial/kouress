@@ -1,4 +1,4 @@
-<h1>Create new user</h1>
+<h1><%= @user.username %></h1>
 <%= form_for @user do |f| %>
   <% if @user.errors.any? %>
     <div class="error_messages">
@@ -23,10 +23,6 @@
     <%= f.label :password %>
     <%= f.text_field :password %>
   </div>
-  <div class="field">
-    <%= f.label :password_confirmation %>
-    <%= f.text_field :password_confirmation %>
-  </div>
   <% if @current_user.is_admin %>
   <div class="field">
     <%= f.label :is_admin %>
@@ -34,6 +30,6 @@
   </div>
   <% end %>
   <div class="actions">
-    <%= f.submit t('.create') %>
+    <%= f.submit t('.update') %>
   </div>
 <% end %>

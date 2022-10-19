@@ -10,12 +10,7 @@ RSpec.describe 'ManageUsers', type: :feature do
 
   context 'when user is an admin' do
     before do
-      visit login_path
-
-      fill_in 'Username', with: @admin.username
-      fill_in 'Password', with: @admin.password
-
-      click_button I18n.t('sessions.new.log_in')
+      login(@admin)
     end
 
     it 'shows the users list' do
@@ -27,12 +22,7 @@ RSpec.describe 'ManageUsers', type: :feature do
 
   context 'when user is not an admin' do
     before do
-      visit login_path
-
-      fill_in 'Username', with: @users[1].username
-      fill_in 'Password', with: @users[1].password
-
-      click_button I18n.t('sessions.new.log_in')
+      login(@users[1])
     end
 
     it 'shows an error' do

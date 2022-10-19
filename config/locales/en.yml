@@ -41,7 +41,15 @@ en:
       log_in: "Log in"
       title: "Log in"
   users:
+    validators:
+      immutable_username: "Username cannot be modified"
     admin_only:
       failure: "Only administrators can access this page."
     self_or_admin_only:
       failure: "Only administrators or the corresponding user can access this page."
+    new:
+      create: "Create"
+    edit:
+      update: "Update"
+    update:
+      success: "Information updated"
