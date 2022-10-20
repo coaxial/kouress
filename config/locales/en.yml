@@ -37,6 +37,7 @@ en:
     users:
       form:
         update: "Update"
+        create: "Create"
       nav:
         back: "Back to list"
       delete:
@@ -59,7 +60,7 @@ en:
     self_or_admin_only:
       failure: "Only administrators or the corresponding user can access this page."
     new:
-      create: "Create"
+      title: "Add new user"
     update:
       success: "Information updated"
     index:
@@ -77,3 +78,5 @@ en:
       restored: "restored"
       success: "User successfully %{operation}"
       failure: "User not %{operation}"
+    create:
+      success: "User \"%{username}\" created"

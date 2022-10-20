@@ -1,6 +1,6 @@
 <%= form_for @user do |f| %>
   <% if @user.errors.any? %>
-    <div class="error_messages">
+    <div class="error_messages bg-red-500">
       <h2>Form is invalid</h2>
       <ul>
         <% @user.errors.full_messages.each do |message| %>
@@ -22,13 +22,24 @@
     <%= f.label :password %>
     <%= f.password_field :password %>
   </div>
-  <% if @current_user.is_admin %>
+  <% if defined?(action) && action == :create %>
   <div class="field">
-    <%= f.label :is_admin %>
-    <%= f.check_box :is_admin %>
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation %>
+  </div>
+  <% end %>
+  <% if @current_user.admin? %>
+  <div class="field">
+    <%= f.label :admin %>
+    <%= f.check_box :admin %>
   </div>
   <% end %>
   <div class="actions">
+  <% if defined?(action) && action == :create %>
+    <%= f.submit t('.create') %>
+  <% end %>
+  <% if defined?(action) && action == :update %>
     <%= f.submit t('.update') %>
+  <% end %>
   </div>
 <% end %>

@@ -11,9 +11,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      redirect_to users_path, notice: "User #{@user.username} created"
+      redirect_to users_path, notice: t('.success', username: @user.username)
     else
-      render 'new'
+      render 'new', status: :unprocessable_entity
     end
   end
 
@@ -30,7 +30,7 @@ class UsersController < ApplicationController
     if @user.update(update_params.to_h)
       redirect_to edit_user_path, notice: t('.success')
     else
-      render 'edit'
+      render 'edit', status: :unprocessable_entity
     end
   end
 
@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   def destroy
     @user = User.find(params[:id])
 
-    if @user.update(is_deleted: !@user.is_deleted)
+    if @user.update(deleted: !@user.deleted?)
       redirect_to users_path, notice: t('.success', operation:)
     else
       flash.now[:alert] = t('failure', operation:)
@@ -52,24 +52,24 @@ class UsersController < ApplicationController
   private
 
   def operation
-    @user.is_deleted ? t('.deleted') : t('.restored')
+    @user.deleted? ? t('.deleted') : t('.restored')
   end
 
   def admin_only
-    return if @current_user.is_admin
+    return if @current_user.admin?
 
     redirect_to login_url, alert: t('users.admin_only.failure')
   end
 
   def self_or_admin_only
-    return if @current_user.id == params[:id].to_i || @current_user.is_admin
+    return if @current_user.id == params[:id].to_i || @current_user.admin?
 
     redirect_to login_url, alert: t('users.self_or_admin_only.failure')
   end
 
   def user_params
     permitted_params = %i[username email password]
-    permitted_params << :is_admin if @current_user.is_admin
+    permitted_params << :admin if @current_user.admin?
 
     params.require(:user).permit(permitted_params)
   end

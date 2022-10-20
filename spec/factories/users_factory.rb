@@ -9,10 +9,10 @@ FactoryBot.define do
     username { generate :username }
     email { "#{username}@example.org" }
     password { 'supersecure' }
-    is_admin { false }
+    admin { false }
 
     factory :admin do
-      is_admin { true }
+      admin { true }
     end
   end
 end

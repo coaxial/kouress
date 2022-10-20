@@ -99,9 +99,9 @@ RSpec.describe 'Users', type: :request do
       before { login admin }
 
       it 'can change the admin flag' do
-        patch user_path(user), params: { user: { is_admin: !user.is_admin } }
+        patch user_path(user), params: { user: { admin: !user.admin? } }
 
-        expect(User.find(user.id).is_admin).to be !user.is_admin
+        expect(User.find(user.id).admin?).to be !user.admin?
       end
 
       it 'can update a user\'s password' do
@@ -119,9 +119,9 @@ RSpec.describe 'Users', type: :request do
       before { login user }
 
       it 'cannot change its admin flag' do
-        patch user_path(user), params: { user: { is_admin: !user.is_admin } }
+        patch user_path(user), params: { user: { admin: !user.admin? } }
 
-        expect(User.find(user.id).is_admin).to be user.is_admin
+        expect(User.find(user.id).admin?).to be user.admin?
       end
 
       it 'can update its password' do

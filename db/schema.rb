@@ -15,10 +15,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_074615) do
     t.string "username"
     t.string "email"
     t.string "password_digest"
-    t.boolean "is_admin", default: false
+    t.boolean "admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "is_deleted", default: false
+    t.boolean "deleted", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end

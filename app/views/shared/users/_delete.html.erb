@@ -1,4 +1,4 @@
-<% if user.is_deleted %>
+<% if user.deleted? %>
   <%= link_to t('.restore'), user_path(user.id), id: "delete-#{user.id}", data: { turbo_method: :delete, turbo_confirm: t('.restore_confirm_prompt')} %>
 <% else %>
   <%= link_to t('.delete'), user_path(user.id), id: "delete-#{user.id}", data: { turbo_method: :delete, turbo_confirm: t('.delete_confirm_prompt')} %>

@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'CreateUsers', type: :feature do
-  subject { page }
-
   let(:user) { create :user }
   let(:admin) { create :admin }
   let(:new_user) { build :user }
@@ -16,7 +14,7 @@ RSpec.describe 'CreateUsers', type: :feature do
     end
 
     it 'asks to login' do
-      expect(subject).to have_text(I18n.t('users.admin_only.failure'))
+      expect(page).to have_text(I18n.t('users.admin_only.failure'))
     end
   end
 
@@ -29,10 +27,10 @@ RSpec.describe 'CreateUsers', type: :feature do
     it 'can create a new user' do
       fill_form(
         { Username: new_user.username, Email: new_user.username, Password: new_user.password,
-          'Password confirmation': new_user.password }, 'users.new.create'
+          'Password confirmation': new_user.password }, 'shared.users.form.create'
       )
 
-      expect(subject).to have_text(new_user.username)
+      expect(page).to have_text(new_user.username)
     end
   end
 end

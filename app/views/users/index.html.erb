@@ -7,11 +7,11 @@
           id
         </th>
         <th>username</th>
-        <th>is_admin</th>
+        <th>admin</th>
         <th>email</th>
         <th>created_at</th>
         <th>updated_at</th>
-        <th>is_deleted</th>
+        <th>deleted</th>
         <th>operations</th>
       </tr>
     </thead>
@@ -20,12 +20,12 @@
       <tr id="user-<%= user.id %>">
         <td><%= user.id %></td>
         <td><%= user.username %></td>
-        <td><%= user.is_admin %></td>
+        <td><%= user.admin %></td>
         <td><%= user.email %></td>
         <td><%= user.created_at %></td>
         <td><%= user.updated_at %></td>
-        <td id="user-<%= user.id %>-is_deleted">
-          <%= user.is_deleted %>
+        <td id="user-<%= user.id %>-deleted">
+          <%= user.deleted? %>
         </td>
         <td>
           <%= link_to t('.show'), user %>
