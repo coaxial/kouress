@@ -3,38 +3,28 @@
 require 'rails_helper'
 
 RSpec.describe 'ManageUsers', type: :feature do
-  before do
-    @users = create_list(:user, 5)
-    @admin = create(:admin)
-  end
+  subject { page }
+
+  let!(:users) { create_list(:user, 5) }
+  let(:admin) { create(:admin) }
 
   context 'when user is an admin' do
     before do
-      login(@admin)
-    end
-
-    it 'shows the users list' do
+      login admin
       visit users_path
-
-      expect(page).to have_text @users[1].username
     end
+
+    it { is_expected.to have_text users[1].username }
   end
 
   context 'when user is not an admin' do
     before do
-      login(@users[1])
-    end
-
-    it 'shows an error' do
+      login users[1]
       visit users_path
-
-      expect(page).to have_text I18n.t('users.admin_only.failure')
     end
 
-    it 'doesn\'t show the user list' do
-      visit users_path
+    it { is_expected.to have_text I18n.t('users.admin_only.failure') }
 
-      expect(page).not_to have_text @users[0].username
-    end
+    it { is_expected.not_to have_text users[0].username }
   end
 end

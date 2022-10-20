@@ -42,6 +42,8 @@ en:
       delete:
         delete_confirm_prompt: "Delete user?"
         restore_confirm_prompt: "Restore user?"
+        delete: "Delete"
+        restore: "Restore"
   sessions:
     create:
       success: "Login successful."

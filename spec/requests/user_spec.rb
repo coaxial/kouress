@@ -9,37 +9,27 @@ RSpec.describe 'Users', type: :request do
 
   describe 'GET /new_user' do
     context 'when not logged in' do
-      before do
-        get new_user_path
-      end
+      before { get new_user_path }
 
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
+      it { is_expected.to redirect_to(login_path) }
     end
 
     context 'when logged in as a user' do
       before do
         login user
-
         get new_user_path
       end
 
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
+      it { is_expected.to redirect_to(login_path) }
     end
 
     context 'when logged in as an admin' do
       before do
         login admin
-
         get new_user_path
       end
 
-      it 'shows the user creation page' do
-        expect(response).to render_template(:new)
-      end
+      it { is_expected.to render_template(:new) }
     end
   end
 
@@ -47,9 +37,7 @@ RSpec.describe 'Users', type: :request do
     context 'when not logged in' do
       before { get users_path }
 
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
+      it { is_expected.to redirect_to(login_path) }
     end
 
     context 'when logged in as a user' do
@@ -58,9 +46,7 @@ RSpec.describe 'Users', type: :request do
         get users_path
       end
 
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
+      it { is_expected.to redirect_to(login_path) }
     end
 
     context 'when logged in as an admin' do
@@ -69,9 +55,7 @@ RSpec.describe 'Users', type: :request do
         get users_path
       end
 
-      it 'shows the users list page' do
-        expect(response).to render_template(:index)
-      end
+      it { is_expected.to render_template(:index) }
     end
   end
 
@@ -79,9 +63,7 @@ RSpec.describe 'Users', type: :request do
     context 'when not logged in' do
       before { get edit_user_path(user) }
 
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
+      it { is_expected.to redirect_to(login_path) }
     end
 
     context 'when logged in as another user' do
@@ -90,9 +72,7 @@ RSpec.describe 'Users', type: :request do
         get edit_user_path(other_user)
       end
 
-      it 'redirects to the login page' do
-        expect(response).to redirect_to(login_path)
-      end
+      it { is_expected.to redirect_to(login_path) }
     end
 
     context 'when logged in as the user' do
@@ -101,9 +81,7 @@ RSpec.describe 'Users', type: :request do
         get edit_user_path(user)
       end
 
-      it 'shows the edit page' do
-        expect(response).to render_template(:edit)
-      end
+      it { is_expected.to render_template(:edit) }
     end
 
     context 'when logged in as an admin' do
@@ -112,9 +90,7 @@ RSpec.describe 'Users', type: :request do
         get edit_user_path(user)
       end
 
-      it 'shows the edit page' do
-        expect(response).to render_template(:edit)
-      end
+      it { is_expected.to render_template(:edit) }
     end
   end
 
