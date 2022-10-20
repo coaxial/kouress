@@ -39,6 +39,9 @@ en:
         update: "Update"
       nav:
         back: "Back to list"
+      delete:
+        delete_confirm_prompt: "Delete user?"
+        restore_confirm_prompt: "Restore user?"
   sessions:
     create:
       success: "Login successful."
@@ -62,7 +65,13 @@ en:
       delete: "Delete"
       title: "Registered users list"
       new: "Add new user"
+      show: "Show"
     show:
       user: "User"
     edit:
       user: "User"
+    destroy:
+      deleted: "deleted"
+      restored: "restored"
+      success: "User successfully %{operation}"
+      failure: "User not %{operation}"

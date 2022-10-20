@@ -38,7 +38,22 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def destroy
+    @user = User.find(params[:id])
+
+    if @user.update(is_deleted: !@user.is_deleted)
+      redirect_to users_path, notice: t('.success', operation:)
+    else
+      flash.now[:alert] = t('failure', operation:)
+      render 'index', status: :unprocessable_entity
+    end
+  end
+
   private
+
+  def operation
+    @user.is_deleted ? t('.deleted') : t('.restored')
+  end
 
   def admin_only
     return if @current_user.is_admin
