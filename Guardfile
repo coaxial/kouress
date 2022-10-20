@@ -32,7 +32,7 @@ guard :rubocop, cli: ['--autocorrect-all', '--display-cop-names'] do
   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
 end
 
-guard :rspec, cmd: 'bundle exec rspec --format=doc' do
+guard :rspec, cmd: 'bundle exec rspec --format=Fuubar' do
   require 'guard/rspec/dsl'
   dsl = Guard::RSpec::Dsl.new(self)
 

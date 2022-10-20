@@ -59,6 +59,7 @@ group :development, :test do
 
   gem 'capybara'
   gem 'factory_bot_rails'
+  gem 'fuubar'
   gem 'rails-controller-testing'
   gem 'rspec-rails', '~> 6.0.0'
   gem 'rubocop-rspec'
