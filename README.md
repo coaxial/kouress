@@ -30,3 +30,11 @@ The version is specified in `.nvmrc`, currently 16.17.1
 ### Debugging
 
 Use `debugger` anywhere to start an interactive console in the code's context.
+
+For views, `console` loads an interactive console at the bottom of the page in the view's context.
+
+Tests can be run individually by adding the `:focus` tag. Rubocop will complain without autocorrecting, but that will fail the CI build if committed and pushed.
+```ruby
+it 'tests a thing', :focus do
+  # ...
+end
