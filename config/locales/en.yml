@@ -53,10 +53,6 @@ en:
   users:
     validators:
       immutable_username: "Username cannot be modified"
-    admin_only:
-      failure: "Only administrators can access this page."
-    self_or_admin_only:
-      failure: "Only administrators or the corresponding user can access this page."
     new:
       title: "Add new user"
     update:
@@ -77,7 +73,5 @@ en:
       failure: "User not deleted"
     create:
       success: 'User "%{username}" created'
-    same_user:
-      wrong_user: "You are not allowed to do that"
     admin_user:
       not_allowed: "Only administrators can access this page."

@@ -23,7 +23,7 @@ RSpec.describe 'ManageUsers', type: :feature do
       visit users_path
     end
 
-    it { is_expected.to have_text I18n.t('users.admin_only.failure') }
+    it { is_expected.to have_text I18n.t('users.admin_user.not_allowed') }
 
     it { is_expected.not_to have_text users[0].username }
   end
