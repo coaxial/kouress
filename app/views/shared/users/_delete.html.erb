@@ -1,0 +1,1 @@
+<%= link_to t('.delete'), user_path(user.id), id: "delete-#{user.id}", data: { turbo_method: :delete, turbo_confirm: t('.confirm_prompt')} %>

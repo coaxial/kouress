@@ -60,3 +60,7 @@ RSpec/ExampleLength:
 
 Style/FrozenStringLiteralComment:
   AutoCorrect: true
+
+RSpec/Focus:
+  AutoCorrect: false
+  Severity: error

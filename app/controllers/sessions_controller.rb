@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :authorize, except: %i[new create destroy]
+  skip_before_action :require_login, only: %i[new create destroy]
 
   def new; end
 
@@ -25,7 +25,7 @@ class SessionsController < ApplicationController
       redirect_to root_url, notice: t('.success')
     else
       flash.now.alert = t('.failure')
-      render 'new', stats: :unprocessable_entity
+      render 'new', status: :unprocessable_entity
     end
   end
 end

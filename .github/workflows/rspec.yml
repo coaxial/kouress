@@ -9,6 +9,8 @@ on:
 jobs:
   rspec:
     runs-on: ubuntu-latest
+    env:
+      FORBID_FOCUSED_SPECS: 1
 
     steps:
       - uses: actions/checkout@v3

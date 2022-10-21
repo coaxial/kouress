@@ -31,12 +31,47 @@
 
 en:
   application:
-    authorize:
-      not_authorized: "Operation requires authorization."
+    require_login:
+      log_in: "Please log in in first"
+  shared:
+    users:
+      form:
+        update: "Update"
+        create: "Create"
+      nav:
+        back: "Back to list"
+      delete:
+        confirm_prompt: "Delete user?"
+        delete: "Delete"
   sessions:
     create:
-      success: "Login successful."
+      success: "Log in successful."
       failure: "Invalid credentials or user not found."
     new:
       log_in: "Log in"
       title: "Log in"
+  users:
+    validators:
+      immutable_username: "Username cannot be modified"
+    new:
+      title: "Add new user"
+    update:
+      success: "Information updated"
+    index:
+      edit: "Edit"
+      delete: "Delete"
+      title: "Registered users list"
+      new: "Add new user"
+      show: "Show"
+    show:
+      user: "User"
+    edit:
+      user: "User"
+      title: "Edit"
+    destroy:
+      success: "User deleted"
+      failure: "User not deleted"
+    create:
+      success: 'User "%{username}" created'
+    admin_user:
+      not_allowed: "Only administrators can access this page."

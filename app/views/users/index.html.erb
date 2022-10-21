@@ -1,0 +1,38 @@
+<h1><%= t('.title') %></h1>
+<div class="list">
+  <table>
+    <thead>
+      <tr>
+        <th>
+          id
+        </th>
+        <th>username</th>
+        <th>admin</th>
+        <th>email</th>
+        <th>created_at</th>
+        <th>updated_at</th>
+        <th>operations</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @users.each do |user| %>
+      <tr id="user-<%= user.id %>">
+        <td><%= user.id %></td>
+        <td><%= user.username %></td>
+        <td><%= user.admin %></td>
+        <td><%= user.email %></td>
+        <td><%= user.created_at %></td>
+        <td><%= user.updated_at %></td>
+        <td>
+          <%= link_to t('.show'), user %>
+          <%= link_to t('.edit'), edit_user_path(user.id) %>
+          <%= render partial: 'shared/users/delete', locals: {user: user} %>
+        </td>
+      </tr>
+    <% end %>
+    </tobdy>
+  </table>
+</div>
+<div>
+  <%= link_to t('.new'), new_user_path %>
+</div>

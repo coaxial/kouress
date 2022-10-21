@@ -8,4 +8,5 @@ class User < ApplicationRecord
   end
 
   validates :email, :username, uniqueness: true, presence: true
+  validates_with ImmutableUsernameValidator, fields: :username, on: :update
 end
