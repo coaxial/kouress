@@ -71,6 +71,7 @@ en:
       user: "User"
     edit:
       user: "User"
+      title: "Edit"
     destroy:
       success: "User deleted"
       failure: "User not deleted"
