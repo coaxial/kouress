@@ -11,4 +11,8 @@ module SessionsHelper
     # This clears the instance variable set in ApplicationController
     @current_user = nil # rubocop:disable Rails/HelperInstanceVariable
   end
+
+  def logged_in?
+    !current_user.nil?
+  end
 end

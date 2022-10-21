@@ -31,8 +31,8 @@
 
 en:
   application:
-    authorize:
-      not_authorized: "Operation requires authorization."
+    require_login:
+      log_in: "Please log in in first"
   shared:
     users:
       form:
@@ -47,7 +47,7 @@ en:
         restore: "Restore"
   sessions:
     create:
-      success: "Login successful."
+      success: "Log in successful."
       failure: "Invalid credentials or user not found."
     new:
       log_in: "Log in"
@@ -80,3 +80,7 @@ en:
       failure: "User not %{operation}"
     create:
       success: "User \"%{username}\" created"
+    same_user:
+      wrong_user: "You are not allowed to do that"
+    admin_user:
+      not_allowed: "Only administrators can access this page."

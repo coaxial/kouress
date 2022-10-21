@@ -14,9 +14,7 @@ RSpec.describe 'DeleteUsers', type: :feature do
     end
 
     context 'when deleting a user' do
-      before do
-        click_link "delete-#{user.id}"
-      end
+      before { click_link "delete-#{user.id}" }
 
       it 'can delete a user' do
         deletion_status = find("#user-#{user.id}-deleted")
@@ -32,18 +30,19 @@ RSpec.describe 'DeleteUsers', type: :feature do
       end
 
       it 'shows a confirmation' do
-        expect(page).to have_text(I18n.t('users.destroy.success', operation: 'deleted'))
+        expect(page).to have_text(
+          I18n.t('users.destroy.success', operation: 'deleted')
+        )
       end
     end
 
     context 'when restoring a user' do
-      before do
-        # visit users_path
-        click_link "delete-#{deleted_user.id}"
-      end
+      before { click_link "delete-#{deleted_user.id}" }
 
       it 'shows a confirmation' do
-        expect(page).to have_text(I18n.t('users.destroy.success', operation: 'restored'))
+        expect(page).to have_text(
+          I18n.t('users.destroy.success', operation: 'restored')
+        )
       end
     end
   end

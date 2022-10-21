@@ -72,7 +72,7 @@ RSpec.describe 'Users', type: :request do
         get edit_user_path(other_user)
       end
 
-      it { is_expected.to redirect_to(login_path) }
+      it { is_expected.to redirect_to(edit_user_path(user)) }
     end
 
     context 'when logged in as the user' do
@@ -135,9 +135,9 @@ RSpec.describe 'Users', type: :request do
       end
 
       it "can't update another user's attributes" do
-        get user_path(other_user)
+        patch user_path(other_user), params: { user: { email: 'nope@example.org' } }
 
-        expect(response).to redirect_to login_path
+        expect(User.find(other_user.id).email).not_to eq('nope@example.org')
       end
     end
   end
@@ -152,10 +152,10 @@ RSpec.describe 'Users', type: :request do
         expect(response).to render_template(:show)
       end
 
-      it "can't see another user's profile" do
+      it "can see another user's profile" do
         get user_path(other_user)
 
-        expect(response).to redirect_to login_path
+        expect(response).to render_template(:show)
       end
     end
 
@@ -168,6 +168,42 @@ RSpec.describe 'Users', type: :request do
         get user_path(other_user)
 
         expect(response).to render_template(:show)
+      end
+    end
+  end
+
+  describe 'DELETE /users/:id' do
+    context 'when not logged in' do
+      before { delete user_path(user) }
+
+      it { is_expected.to redirect_to login_path }
+
+      it "doesn't delete the user" do
+        expect(User.find(user.id)).not_to be_deleted
+      end
+    end
+
+    context 'when logged in as a user' do
+      before do
+        login user
+        delete user_path(user)
+      end
+
+      it { is_expected.to redirect_to login_path }
+
+      it "doesn't delete the user" do
+        expect(User.find(user.id)).not_to be_deleted
+      end
+    end
+
+    context 'when logged in as an admin' do
+      before do
+        login admin
+        delete user_path user
+      end
+
+      it 'deletes the user' do
+        expect(User.find(user.id)).to be_deleted
       end
     end
   end

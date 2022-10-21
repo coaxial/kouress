@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :admin_only, except: %i[show edit update]
-  before_action :self_or_admin_only, only: %i[show edit update]
+  before_action :redirect_to_own, only: :edit
+  before_action :override_user, only: %i[edit update]
+  before_action :admin_user, only: %i[index destroy new create]
 
   def new
     @user = User.new
@@ -21,12 +22,9 @@ class UsersController < ApplicationController
     @users = User.all
   end
 
-  def edit
-    @user = User.find(params[:id])
-  end
+  def edit; end
 
   def update
-    @user = User.find(params[:id])
     if @user.update(update_params.to_h)
       redirect_to edit_user_path, notice: t('.success')
     else
@@ -39,8 +37,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find(params[:id])
-
+    @user = User.find(params[:id].to_i)
     if @user.update(deleted: !@user.deleted?)
       redirect_to users_path, notice: t('.success', operation:)
     else
@@ -51,20 +48,28 @@ class UsersController < ApplicationController
 
   private
 
+  def admin_user
+    redirect_to login_url, alert: t('users.admin_user.not_allowed'), status: :see_other unless current_user.admin?
+  end
+
+  # Selects the requested User for admins, or their own for users
+  def override_user
+    @user = User.find(current_user.id) if current_user
+    @user = User.find(params[:id].to_i) if current_user.admin?
+  end
+
+  # If the user tries to edit another profile and isn't an admin, redirect to
+  # their own profile instead
+  def redirect_to_own
+    unless current_user&.admin? || params[:id].to_i == current_user&.id
+      redirect_to edit_user_path(current_user),
+                  params:,
+                  status: :see_other
+    end
+  end
+
   def operation
     @user.deleted? ? t('.deleted') : t('.restored')
-  end
-
-  def admin_only
-    return if @current_user.admin?
-
-    redirect_to login_url, alert: t('users.admin_only.failure')
-  end
-
-  def self_or_admin_only
-    return if @current_user.id == params[:id].to_i || @current_user.admin?
-
-    redirect_to login_url, alert: t('users.self_or_admin_only.failure')
   end
 
   def user_params

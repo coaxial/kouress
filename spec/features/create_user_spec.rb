@@ -14,7 +14,7 @@ RSpec.describe 'CreateUsers', type: :feature do
     end
 
     it 'asks to login' do
-      expect(page).to have_text(I18n.t('users.admin_only.failure'))
+      expect(page).to have_text(I18n.t('users.admin_user.not_allowed'))
     end
   end
 
@@ -26,8 +26,13 @@ RSpec.describe 'CreateUsers', type: :feature do
 
     it 'can create a new user' do
       fill_form(
-        { Username: new_user.username, Email: new_user.username, Password: new_user.password,
-          'Password confirmation': new_user.password }, 'shared.users.form.create'
+        {
+          Username: new_user.username,
+          Email: new_user.username,
+          Password: new_user.password,
+          'Password confirmation': new_user.password
+        },
+        'shared.users.form.create'
       )
 
       expect(page).to have_text(new_user.username)

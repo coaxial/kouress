@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :authorize, except: %i[new create destroy]
+  skip_before_action :require_login, only: %i[new create destroy]
 
   def new; end
 

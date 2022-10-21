@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::Base
   include SessionsHelper
 
-  before_action :authorize
+  before_action :require_login
 
   private
 
@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
-  def authorize
-    redirect_to login_url, alert: t('application.authorize.not_authorized') if current_user.nil?
+  def require_login
+    redirect_to login_url, status: :see_other, alert: t('.log_in') unless logged_in?
   end
 end
