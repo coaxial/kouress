@@ -6,6 +6,14 @@ RSpec.describe 'CreateUsers', type: :feature do
   let(:user) { create :user }
   let(:admin) { create :admin }
   let(:new_user) { build :user }
+  let(:new_user_form) do
+    {
+      Username: new_user.username,
+      Email: new_user.username,
+      Password: new_user.password,
+      'Password confirmation': new_user.password
+    }
+  end
 
   context 'when user is not an admin' do
     before do
@@ -25,15 +33,7 @@ RSpec.describe 'CreateUsers', type: :feature do
     end
 
     it 'can create a new user' do
-      fill_form(
-        {
-          Username: new_user.username,
-          Email: new_user.username,
-          Password: new_user.password,
-          'Password confirmation': new_user.password
-        },
-        'shared.users.form.create'
-      )
+      fill_form(new_user_form, 'shared.users.form.create')
 
       expect(page).to have_text(new_user.username)
     end

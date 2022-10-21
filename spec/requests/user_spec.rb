@@ -179,7 +179,7 @@ RSpec.describe 'Users', type: :request do
       it { is_expected.to redirect_to login_path }
 
       it "doesn't delete the user" do
-        expect(User.find(user.id)).not_to be_deleted
+        expect(User.find(user.id)).to be_truthy
       end
     end
 
@@ -190,10 +190,6 @@ RSpec.describe 'Users', type: :request do
       end
 
       it { is_expected.to redirect_to login_path }
-
-      it "doesn't delete the user" do
-        expect(User.find(user.id)).not_to be_deleted
-      end
     end
 
     context 'when logged in as an admin' do
@@ -203,7 +199,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'deletes the user' do
-        expect(User.find(user.id)).to be_deleted
+        expect { User.find(user.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

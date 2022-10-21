@@ -41,10 +41,8 @@ en:
       nav:
         back: "Back to list"
       delete:
-        delete_confirm_prompt: "Delete user?"
-        restore_confirm_prompt: "Restore user?"
+        confirm_prompt: "Delete user?"
         delete: "Delete"
-        restore: "Restore"
   sessions:
     create:
       success: "Log in successful."
@@ -74,12 +72,10 @@ en:
     edit:
       user: "User"
     destroy:
-      deleted: "deleted"
-      restored: "restored"
-      success: "User successfully %{operation}"
-      failure: "User not %{operation}"
+      success: "User deleted"
+      failure: "User not deleted"
     create:
-      success: "User \"%{username}\" created"
+      success: 'User "%{username}" created'
     same_user:
       wrong_user: "You are not allowed to do that"
     admin_user:

@@ -11,7 +11,6 @@
         <th>email</th>
         <th>created_at</th>
         <th>updated_at</th>
-        <th>deleted</th>
         <th>operations</th>
       </tr>
     </thead>
@@ -24,9 +23,6 @@
         <td><%= user.email %></td>
         <td><%= user.created_at %></td>
         <td><%= user.updated_at %></td>
-        <td id="user-<%= user.id %>-deleted">
-          <%= user.deleted? %>
-        </td>
         <td>
           <%= link_to t('.show'), user %>
           <%= link_to t('.edit'), edit_user_path(user.id) %>

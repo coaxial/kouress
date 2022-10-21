@@ -36,7 +36,7 @@ RSpec.describe 'EditUsers', type: :feature do
       visit edit_user_path(user)
     end
 
-    it { expect(subject).to have_field('user_admin') }
+    it { is_expected.to have_field('user_admin') }
 
     it 'can update email' do
       fill_form({ Email: 'newemail@example.org' }, submit_label)

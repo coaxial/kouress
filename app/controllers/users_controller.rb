@@ -38,10 +38,10 @@ class UsersController < ApplicationController
 
   def destroy
     @user = User.find(params[:id].to_i)
-    if @user.update(deleted: !@user.deleted?)
-      redirect_to users_path, notice: t('.success', operation:)
+    if @user.destroy
+      redirect_to users_path, notice: t('.success')
     else
-      flash.now[:alert] = t('failure', operation:)
+      flash.now[:alert] = t('failure')
       render 'index', status: :unprocessable_entity
     end
   end
@@ -61,15 +61,11 @@ class UsersController < ApplicationController
   # If the user tries to edit another profile and isn't an admin, redirect to
   # their own profile instead
   def redirect_to_own
-    unless current_user&.admin? || params[:id].to_i == current_user&.id
-      redirect_to edit_user_path(current_user),
-                  params:,
-                  status: :see_other
-    end
-  end
+    return if current_user&.admin? || params[:id].to_i == current_user&.id
 
-  def operation
-    @user.deleted? ? t('.deleted') : t('.restored')
+    redirect_to edit_user_path(current_user),
+                params:,
+                status: :see_other
   end
 
   def user_params
