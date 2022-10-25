@@ -2,8 +2,6 @@
   <% if document.file.representable? %>
     <p><%= image_tag document.file.representation(resize_to_limit: [500, 500]) %></p>
   <% else %>
-    <p><%= link_to_rails_blob_path(document.file, disposition: "attachment") do %>
-      <p><%= ('.download_file') %></p>
-    <% end %>
+    <p><%= t('.no_representation') %></p>
   <% end %>
 </div>

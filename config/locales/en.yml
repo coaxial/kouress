@@ -43,6 +43,13 @@ en:
       delete:
         confirm_prompt: "Delete user?"
         delete: "Delete"
+    document:
+      metadata:
+        ago: "ago"
+      download:
+        download_file: "Download file"
+      representation:
+        no_representation: "No preview available"
   sessions:
     create:
       success: "Log in successful."
@@ -76,9 +83,6 @@ en:
     admin_user:
       not_allowed: "Only administrators can access this page."
   documents:
-    document:
-      ago: "ago"
-      download_file: "Download file"
     form:
       upload: "Upload"
     create:
