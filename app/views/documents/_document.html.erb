@@ -1,9 +1,9 @@
 <div>
   <h1><%= document.original_filename %></h1>
   <div>
-    <%= render partial: 'shared/document/metadata', locals: { document: document } %>
-    <%= render partial: 'shared/document/download', locals: { document: document } %>
-    <%= render partial: 'shared/document/representation', locals: { document: document } %>
+    <%= render partial: 'shared/document/metadata', locals: { document: } %>
+    <%= render partial: 'shared/document/download', locals: { document: } %>
+    <%= render partial: 'shared/document/representation', locals: { document: } %>
   </div>
   <pre>---</pre>
 </div>
