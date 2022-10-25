@@ -3,9 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Login', type: :feature do
-  before do
-    @user = create(:user)
-  end
+  before { @user = create(:user) }
 
   context 'with valid credentials' do
     it 'logs the user in' do
@@ -16,7 +14,7 @@ RSpec.describe 'Login', type: :feature do
 
       click_button I18n.t('sessions.new.log_in')
 
-      expect(page).to have_text('Site#home')
+      expect(page).to have_text('Log in successful')
     end
   end
 
