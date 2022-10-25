@@ -1,0 +1,10 @@
+<h1>Upload document</h1>
+<%= form_for @document do |f| %>
+  <div class="field">
+    <%= f.label :file %>
+    <%= f.file_field :file, accept: 'application/pdf' %>
+  </div>
+  <div class="actions">
+    <%= f.submit t('documents.form.upload') %>
+  </div>
+<% end %>

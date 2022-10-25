@@ -43,6 +43,13 @@ en:
       delete:
         confirm_prompt: "Delete user?"
         delete: "Delete"
+    document:
+      metadata:
+        ago: "ago"
+      download:
+        download_file: "Download file"
+      representation:
+        no_representation: "No preview available"
   sessions:
     create:
       success: "Log in successful."
@@ -75,3 +82,10 @@ en:
       success: 'User "%{username}" created'
     admin_user:
       not_allowed: "Only administrators can access this page."
+  documents:
+    form:
+      upload: "Upload"
+    create:
+      unsupported_mimetype: "This document's type isn't supported"
+      success: "Document successfully uploaded"
+      failure: "Couldn't create document"
