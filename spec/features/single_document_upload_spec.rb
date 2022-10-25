@@ -19,6 +19,10 @@ RSpec.describe 'SingleDocumentUploads', type: :feature do
     it 'can upload a document' do
       expect(page).to have_text('p761-thompson.pdf')
     end
+
+    it 'shows a success message' do
+      expect(page).to have_text('successfully')
+    end
   end
 
   context 'with unsupported mimetype' do
@@ -28,7 +32,7 @@ RSpec.describe 'SingleDocumentUploads', type: :feature do
     end
 
     it "doesn't keep the document" do
-      expect(page).to have_text(I18n.t('documents.create.unsupported_mimetype'))
+      expect(page).to have_text("isn't supported")
     end
   end
 end
