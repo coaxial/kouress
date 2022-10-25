@@ -78,3 +78,5 @@ en:
   documents:
     form:
       upload: "Upload"
+    create:
+      unsupported_mimetype: "This document's type isn't supported"
