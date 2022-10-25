@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :document do
-    original_filename { 'MyString' }
-    size { 1 }
-    mimetype { 'MyString' }
+    original_filename { 'Test filename' }
+    size_bytes { 13_371_337 }
+    mimetype { 'application/pdf' }
   end
 end

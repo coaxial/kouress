@@ -75,3 +75,6 @@ en:
       success: 'User "%{username}" created'
     admin_user:
       not_allowed: "Only administrators can access this page."
+  documents:
+    form:
+      upload: "Upload"

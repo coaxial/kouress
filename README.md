@@ -20,6 +20,7 @@ The version is specified in `.nvmrc`, currently 16.17.1
 - Switch nodejs versions with `nvm use`
 - Enable `corepack` with `corepack enable`
 - Install JS dependencies: `yarn install`
+- Install libvips: `apt install libvips`
 
 ### Run the development server and redis
 

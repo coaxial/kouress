@@ -1,0 +1,9 @@
+<h1>
+  <%= document.original_filename %>
+</h1>
+<div>
+  <p>Size: <%= document.size_bytes %></p>
+  <p>Mimetype: <%= document.mimetype %></p>
+  <p>Created at: <%= document.created_at %></p>
+  <p><%= image_tag document.file.representation(resize_to_limit: [500, 500]) %></p>
+</div>
