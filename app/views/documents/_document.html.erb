@@ -1,15 +1,8 @@
-<h1>
-  <%= document.original_filename %>
-</h1>
 <div>
-  <p>Size: <%= number_to_human_size(document.size_bytes) %></p>
-  <p>Mimetype: <%= document.mimetype %></p>
-  <p>Created: <%= time_ago_in_words(document.created_at) %> <%= t('.ago') %></p>
-  <% if document.file.representable? %>
-  <p><%= image_tag document.file.representation(resize_to_limit: [500, 500]) %></p>
-  <% else %>
-    <p><%= link_to_rails_blob_path(document.file, disposition: "attachment") do %>
-      <p><%= ('.download_file') %></p>
-    <% end %>
-  <% end %>
+  <h1><%= document.original_filename %></h1>
+  <div>
+    <%= render partial: 'shared/document/metadata', locals: { document: document } %>
+    <%= render partial: 'shared/document/representation', locals: { document: document } %>
+  </div>
+  <pre>---</pre>
 </div>

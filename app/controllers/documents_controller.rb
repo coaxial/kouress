@@ -8,14 +8,11 @@ class DocumentsController < ApplicationController
   end
 
   def create
-    file = document_params[:file]
-    size_bytes = file.size
-    original_filename = file.original_filename
-    mimetype = file.content_type
-    @document = Document.new(document_params.merge(size_bytes:, original_filename:, mimetype:))
+    @document = Document.new(create_params)
     if @document.save
       redirect_to documents_path, notice: t('.success')
     else
+      flash.now.alert = t('.failure')
       render 'new', status: :unprocessable_entity
     end
   end
@@ -27,18 +24,24 @@ class DocumentsController < ApplicationController
   private
 
   def reject_unsupported_mimetypes
-    Rails.logger.debug { "entering reject_unsupported_mimetypes with #{document_params}" }
-    unless Document.supported_mimetypes.include?(document_params[:file].content_type)
-      Rails.logger.debug 'rejecting mimetype'
-      # TODO: show list of supported documents along with error message
+    unless Document.supported_mimetypes.include?(
+      document_params[:file].content_type
+    )
+      @document = Document.new(create_params)
       flash.now.alert = t('documents.create.unsupported_mimetype')
-      @document = Document.new
       render 'new', status: :unprocessable_entity
     end
-    Rails.logger.debug 'accepting mimetype'
   end
 
   def document_params
     params.require(:document).permit(%i[file])
+  end
+
+  def create_params
+    document_params.merge(
+      size_bytes: document_params[:file].size,
+      original_filename: document_params[:file].original_filename,
+      mimetype: document_params[:file].content_type
+    )
   end
 end

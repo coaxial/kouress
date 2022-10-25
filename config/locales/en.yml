@@ -84,3 +84,4 @@ en:
     create:
       unsupported_mimetype: "This document's type isn't supported"
       success: "Document successfully uploaded"
+      failure: "Couldn't create document"

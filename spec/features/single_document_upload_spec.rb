@@ -31,7 +31,7 @@ RSpec.describe 'SingleDocumentUploads', type: :feature do
       click_button I18n.t('documents.form.upload')
     end
 
-    it "doesn't keep the document" do
+    it 'shows a message' do
       expect(page).to have_text("isn't supported")
     end
   end
