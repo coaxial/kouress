@@ -4,11 +4,12 @@
 class DocumentsAnalysisJob < ApplicationJob
   queue_as :default
 
-  def perform(path:, document_id:)
+  def perform(document)
+    path = ActiveStorage::Blob.service.path_for(document.file.key)
     reader = PDF::Reader.new(path)
 
     reader.pages.each do |page|
-      Page.create(document_id:, page_no: page.number, text: page.text)
+      Page.create(document:, page_no: page.number, text: page.text)
     end
   end
 end

@@ -6,10 +6,12 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
   context 'with a PDF file' do
     let(:document) { create(:document) }
 
-    it 'extracts the pages', :focus do
-      path = ActiveStorage::Blob.service.path_for(document.file.key)
-      ActiveJob::Base.queue_adapter = :test
-      described_class.perform_now(path:, document_id: document.id)
+    it 'schedules document analysis' do
+      expect(described_class).to have_been_enqueued.with(document)
+    end
+
+    it 'extracts pages' do
+      described_class.perform_now(document)
 
       expect(document.pages.count).to eq(3)
     end

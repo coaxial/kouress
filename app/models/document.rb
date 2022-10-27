@@ -3,6 +3,7 @@
 class Document < ApplicationRecord
   has_many :pages, dependent: :delete_all
   has_one_attached :file
+  # TODO: callback is called twice and has twice the pages
   after_save :analyze_document, unless: :pages_populated?
 
   def self.supported_mimetypes
@@ -12,8 +13,7 @@ class Document < ApplicationRecord
   private
 
   def analyze_document
-    path = ActiveStorage::Blob.service.path_for(file.key)
-    DocumentsAnalysisJob.perform_later(path:, document_id: id)
+    DocumentsAnalysisJob.perform_later(self)
   end
 
   def pages_populated?
