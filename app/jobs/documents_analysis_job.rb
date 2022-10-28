@@ -4,8 +4,20 @@
 class DocumentsAnalysisJob < ApplicationJob
   queue_as :default
 
-  def perform(document)
-    path = ActiveStorage::Blob.service.path_for(document.file.key)
+  def perform(document, path_for = ActiveStorage::Blob.service.method(:path_for))
+    if document.unprocessed?
+      create_pages(document, path_for)
+      document.paginate
+    end
+  rescue StandardError
+    document.fail
+    raise
+  end
+
+  private
+
+  def create_pages(document, path_for)
+    path = path_for.call(document.file.key)
     reader = PDF::Reader.new(path)
 
     reader.pages.each do |page|
