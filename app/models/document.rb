@@ -10,10 +10,10 @@ class Document < ApplicationRecord
   # State machine
   # Valid transitions:
   # unprocessed => paginated => processed
-  #      \             /
-  #             <=
-  STATES = %w[unprocessed paginated processed].freeze
-  delegate :unprocessed?, :paginated?, :processed?, to: :current_state
+  #           \\
+  #             => failed
+  STATES = %w[unprocessed paginated processed failed].freeze
+  delegate :unprocessed?, :paginated?, :processed?, :failed?, to: :current_state
 
   def current_state
     (events.last.try(:state) || STATES.first).inquiry
@@ -28,7 +28,7 @@ class Document < ApplicationRecord
   end
 
   def fail
-    events.create! state: 'unprocessed' if paginated?
+    events.create! state: 'failed' if unprocessed?
   end
 
   def self.unprocessed

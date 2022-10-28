@@ -21,6 +21,7 @@ class DocumentsAnalysisJob < ApplicationJob
     reader = PDF::Reader.new(path)
 
     reader.pages.each do |page|
+      # TODO: handle images that need OCR to get the text
       Page.create(document:, page_no: page.number, text: page.text)
     end
   end

@@ -21,6 +21,12 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
 
       expect(document.pages.count).to eq(3)
     end
+
+    it 'changes state' do
+      described_class.perform_now(document)
+
+      expect(document.current_state).to be_paginated
+    end
   end
 
   context 'when the job fails' do
@@ -31,14 +37,14 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
       expect { described_class.perform_now(document, path_for_mock) }.to raise_error(RuntimeError, 'Mock error')
     end
 
-    it 'stays unprocessed' do
+    it 'changes state to failed' do
       described_class.perform_now(document, path_for_mock)
       # this is fine, we _want_ to suppress the exception: having the
       # expectation in ensure means it's always run even when no exceptions are
-      # raised.
+      # raised, and avoids having the test pass.
     rescue RuntimeError # rubocop:disable Lint/SuppressedException
     ensure
-      expect(document.current_state).to be_unprocessed
+      expect(document.current_state).to be_failed
     end
   end
 end

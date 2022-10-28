@@ -7,7 +7,7 @@ class DocumentProcessingEvent < ApplicationRecord
   validates :state,
             inclusion: { in: Document::STATES,
                          message: lambda do |_object, data|
-                           "#{data[:value].inspect} is not a valid state (valid states: #{Document::STATES})"
+                           "#{data[:value].inspect} is not a valid state (valid states: #{Document::STATES.to_sentence})"
                          end }
 
   def self.with_last_state(state)
