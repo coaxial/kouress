@@ -17,7 +17,8 @@ RSpec.describe 'SingleDocumentUploads', type: :feature do
     end
 
     it 'can upload a document' do
-      expect(page).to have_text('p761-thompson.pdf')
+      visit documents_path
+      expect(page).to have_selector('.document-1')
     end
 
     it 'shows a success message' do
