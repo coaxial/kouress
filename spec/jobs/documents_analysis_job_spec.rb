@@ -33,58 +33,6 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
     end
   end
 
-  context 'when the job fails' do
-    let(:document) { create(:document) }
-
-    before { allow(File).to receive(:new).and_raise(RuntimeError, 'Mock error') }
-
-    it "doesn't swallow the exception" do
-      expect { described_class.perform_now(document.id) }.to raise_error(RuntimeError, 'Mock error')
-    end
-
-    it 'changes state to failed' do
-      described_class.perform_now(document.id)
-      # this is fine, we _want_ to suppress the exception: having the
-      # expectation in `ensure` means it's always run even when no exceptions
-      # are raised, and avoids having the test pass.
-    rescue RuntimeError # rubocop:disable Lint/SuppressedException
-    ensure
-      expect(document.current_state).to be_failed
-    end
-  end
-
-  context "when the file hasn't been written yet" do
-    let(:document) { create(:document) }
-
-    before { allow(File).to receive(:new).and_raise(Errno::ENOENT) }
-
-    it 'changes state to failed' do
-      described_class.perform_now(document.id)
-
-      expect(document.current_state).to be_failed
-    end
-
-    it 'retries later' do
-      described_class.perform_now(document.id)
-
-      expect(described_class).to have_been_enqueued.exactly(:twice)
-    end
-
-    context 'when it fails too many times' do
-      let(:job) { instance_double(described_class) }
-
-      before do
-        allow(job).to receive(:executions_for).and_return(DocumentsAnalysisJob::MAX_ATTEMPTS)
-      end
-
-      it 'eventually changes state to failed' do
-        described_class.perform_now(document.id)
-
-        expect(document.current_state).to be_failed
-      end
-    end
-  end
-
   context 'when a document is failed' do
     let(:document) { create(:document) }
 
