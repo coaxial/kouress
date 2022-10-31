@@ -11,23 +11,23 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
     after { clear_enqueued_jobs }
 
     it 'schedules document analysis' do
-      expect(described_class).to have_been_enqueued.with(document)
+      expect(described_class).to have_been_enqueued.with(document.id)
     end
 
     it 'extracts pages' do
-      described_class.perform_now(document)
+      described_class.perform_now(document.id)
 
       expect(document.pages.count).to eq(3)
     end
 
     it 'extracts pages only once' do
-      2.times { described_class.perform_now(document) }
+      2.times { described_class.perform_now(document.id) }
 
       expect(document.pages.count).to eq(3)
     end
 
     it 'changes state' do
-      described_class.perform_now(document)
+      described_class.perform_now(document.id)
 
       expect(document.current_state).to be_paginated
     end
@@ -39,11 +39,11 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
     before { allow(File).to receive(:new).and_raise(RuntimeError, 'Mock error') }
 
     it "doesn't swallow the exception" do
-      expect { described_class.perform_now(document) }.to raise_error(RuntimeError, 'Mock error')
+      expect { described_class.perform_now(document.id) }.to raise_error(RuntimeError, 'Mock error')
     end
 
     it 'changes state to failed' do
-      described_class.perform_now(document)
+      described_class.perform_now(document.id)
       # this is fine, we _want_ to suppress the exception: having the
       # expectation in `ensure` means it's always run even when no exceptions
       # are raised, and avoids having the test pass.
@@ -59,21 +59,26 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
     before { allow(File).to receive(:new).and_raise(Errno::ENOENT) }
 
     it 'changes state to failed' do
-      described_class.perform_now(document)
+      described_class.perform_now(document.id)
 
       expect(document.current_state).to be_failed
     end
 
     it 'retries later' do
-      described_class.perform_now(document)
+      described_class.perform_now(document.id)
 
       expect(described_class).to have_been_enqueued.exactly(:twice)
     end
 
     context 'when it fails too many times' do
+      let(:job) { instance_double(described_class) }
+
+      before do
+        allow(job).to receive(:executions_for).and_return(DocumentsAnalysisJob::MAX_ATTEMPTS)
+      end
+
       it 'eventually changes state to failed' do
-        allow_any_instance_of(described_class).to receive(:executions_for).and_return(DocumentsAnalysisJob::MAX_ATTEMPTS)
-        described_class.perform_now(document)
+        described_class.perform_now(document.id)
 
         expect(document.current_state).to be_failed
       end
@@ -86,7 +91,7 @@ RSpec.describe DocumentsAnalysisJob, type: :job do
     before { document.fail }
 
     it 'can be tried again' do
-      described_class.perform_now(document)
+      described_class.perform_now(document.id)
 
       expect(document.current_state).to be_paginated
     end

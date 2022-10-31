@@ -41,6 +41,6 @@ class Document < ApplicationRecord
   private
 
   def analyze_document
-    DocumentsAnalysisJob.perform_later(self)
+    DocumentsAnalysisJob.perform_later(id)
   end
 end

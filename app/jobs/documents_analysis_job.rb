@@ -9,13 +9,9 @@ class DocumentsAnalysisJob < ApplicationJob
   queue_as :default
   retry_on Errno::ENOENT, wait: :exponentially_longer, attempts: MAX_ATTEMPTS
 
-  def perform(document)
-    @document = document
-    if @document.unprocessed? || @document.failed?
-      check_for_file
-      create_pages
-      @document.paginate
-    end
+  def perform(document_id)
+    @document = Document.find(document_id)
+    paginate_document if @document.unprocessed? || @document.failed?
   rescue Errno::ENOENT
     handle_file_not_found
   rescue StandardError
@@ -46,5 +42,11 @@ class DocumentsAnalysisJob < ApplicationJob
     Rails.logger.debug { "File not found in storage yet (attempt #{current_attempt}/#{MAX_ATTEMPTS})" }
     @document.fail
     raise unless current_attempt >= MAX_ATTEMPTS
+  end
+
+  def paginate_document
+    check_for_file
+    create_pages
+    @document.paginate
   end
 end
