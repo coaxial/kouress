@@ -10,7 +10,7 @@ class DocumentsController < ApplicationController
   def create
     @document = Document.new(create_params)
     if @document.save
-      redirect_to documents_path, notice: t('.success')
+      redirect_back_or_to documents_path, notice: t('.success')
     else
       flash.now.alert = t('.failure')
       render 'new', status: :unprocessable_entity
@@ -20,6 +20,16 @@ class DocumentsController < ApplicationController
   def index
     # FIXME: paginate this
     @documents = Document.all
+  end
+
+  def destroy
+    @document = Document.find(params[:id])
+    if @document.destroy
+      redirect_back_or_to root_path, notice: t('.success')
+    else
+      flash.now[:alert] = t('.failure')
+      render 'index', status: :unprocessable_entity
+    end
   end
 
   private

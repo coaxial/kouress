@@ -41,7 +41,7 @@ class UsersController < ApplicationController
     if @user.destroy
       redirect_to users_path, notice: t('.success')
     else
-      flash.now[:alert] = t('failure')
+      flash.now[:alert] = t('.failure')
       render 'index', status: :unprocessable_entity
     end
   end

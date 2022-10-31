@@ -50,6 +50,9 @@ en:
         download_file: "Download file"
       representation:
         no_representation: "No preview available"
+      delete:
+        confirm_prompt: "Delete document?"
+        delete: "Delete"
   sessions:
     create:
       success: "Log in successful."
@@ -89,3 +92,8 @@ en:
       unsupported_mimetype: "This document's type isn't supported"
       success: "Document successfully uploaded"
       failure: "Couldn't create document"
+    destroy:
+      success: "Document deleted"
+      failure: "Document not deleted"
+    index:
+      no_docs: "No documents yet"
