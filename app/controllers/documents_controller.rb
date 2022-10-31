@@ -15,10 +15,6 @@ class DocumentsController < ApplicationController
       flash.now.alert = t('.failure')
       render 'new', status: :unprocessable_entity
     end
-
-    # TODO: split PDF into pages (Page)
-    # TODO: parse each page for metadata (page number etc)
-    # TODO: use Active Job queues for that(probably)
   end
 
   def index
