@@ -25,6 +25,10 @@ RSpec.configure do |config|
 
   config.include FeatureHelper, type: :feature
   config.include RequestHelper, type: :request
+  # TODO: clear_enqueued_jobs automatically for type: :job
+  # config.include ActiveJob::TestHelper, type: :job
 
   config.after(:suite) { FileUtils.rm_rf(ActiveStorage::Blob.service.root) }
+  # TODO: clear_enqueued_jobs automatically for type: :job
+  # config.after(:suite) { clear_enqueued_jobs }
 end

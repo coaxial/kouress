@@ -18,6 +18,7 @@ class DocumentsController < ApplicationController
   end
 
   def index
+    # FIXME: paginate this
     @documents = Document.all
   end
 

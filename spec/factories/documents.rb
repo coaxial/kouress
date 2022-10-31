@@ -2,8 +2,16 @@
 
 FactoryBot.define do
   factory :document do
-    original_filename { 'test_filename.pdf' }
-    size_bytes { 13_371_337 }
+    transient { document_file { file_fixture('p761-thompson.pdf') } }
     mimetype { 'application/pdf' }
+
+    after :build do |record, evaluator|
+      record.file.attach(
+        io: evaluator.document_file.open,
+        filename: evaluator.document_file.basename.to_s
+      )
+      record.size_bytes = evaluator.document_file.size
+      record.original_filename = evaluator.document_file.basename.to_s
+    end
   end
 end
