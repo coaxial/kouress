@@ -23,6 +23,7 @@ Metrics/BlockLength:
     - Guardfile
     - "db/migrate/*.rb"
     - "spec/**/*"
+    - "config/environments/*.rb"
 
 Metrics/MethodLength:
   Exclude:
