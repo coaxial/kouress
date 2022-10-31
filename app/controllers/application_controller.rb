@@ -13,6 +13,6 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def require_login
-    redirect_to login_url, status: :see_other, alert: t('.log_in') unless logged_in?
+    redirect_to login_url, status: :see_other, alert: t('application.require_login.log_in') unless logged_in?
   end
 end

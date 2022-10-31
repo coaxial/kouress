@@ -4,14 +4,12 @@ class Document < ApplicationRecord
   has_many :pages, dependent: :delete_all
   has_many :events, dependent: :delete_all, class_name: 'DocumentProcessingEvent'
   has_one_attached :file
-  # TODO: callback is called twice and has twice the pages
-  after_save :analyze_document, unless: :processed?
+  after_commit :analyze_document, unless: :processed?
 
   # State machine
   # Valid transitions:
   # unprocessed => paginated => processed
-  #           \\
-  #             => failed
+  #             => failed    => paginated => processed
   STATES = %w[unprocessed paginated processed failed].freeze
   delegate :unprocessed?, :paginated?, :processed?, :failed?, to: :current_state
 
@@ -24,7 +22,7 @@ class Document < ApplicationRecord
   end
 
   def paginate
-    events.create! state: 'paginated' if unprocessed?
+    events.create! state: 'paginated' if unprocessed? || failed?
   end
 
   def fail
