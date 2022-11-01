@@ -39,3 +39,5 @@ Tests can be run individually by adding the `:focus` tag. Rubocop will complain 
 it 'tests a thing', :focus do
 end
 ```
+
+Sidekiq's console is at `/sidekiq` (disabled outside of the development env)

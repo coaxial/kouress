@@ -1,0 +1,7 @@
+%h1 Upload document
+= form_for @document do |f|
+  %div.field
+    = f.label :file
+    = f.file_field :file, accept: 'application/pdf'
+  %div.actions
+    = f.submit t('documents.form.upload')
