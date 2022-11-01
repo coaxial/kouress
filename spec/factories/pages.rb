@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :page do
-    document { nil }
-    page_no { 1 }
+    document
+    sequence(:page_no) { |n| n }
   end
 end

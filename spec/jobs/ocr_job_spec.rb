@@ -1,0 +1,35 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe OcrJob, type: :job do
+  include ActiveJob::TestHelper
+
+  after { clear_enqueued_jobs }
+
+  context 'with a PDF file' do
+    let(:text) do
+      'Reflections on Trusting Trust To what extent should one trust a statement that a program is free of Trojan horses? Perhaps it is more important to trust the people who wrote the software. KEN THOMPSON'
+    end
+
+    context 'when there is text embedded' do
+      let!(:document) { create :document }
+
+      before { described_class.perform_now(document.pages.first.id) }
+
+      it 'extracts the text' do
+        expect(document.pages.first.text.squish).to include(text)
+      end
+    end
+
+    context 'when there is no text embedded' do
+      let!(:document) { create :document_without_embedded_text }
+
+      before { described_class.perform_now(document.pages.first.id) }
+
+      it 'extracts the text' do
+        expect(document.pages.first.text.squish).to include(text)
+      end
+    end
+  end
+end
