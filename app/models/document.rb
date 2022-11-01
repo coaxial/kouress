@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class Document < ApplicationRecord
+  include ActiveModel::Validations
   has_many :pages, dependent: :delete_all
   has_many :events, dependent: :delete_all, class_name: 'DocumentProcessingEvent'
   has_one_attached :file
-  after_commit :analyze_document, unless: :processed?
+  validates_with UniqueFileValidator, on: :create
+  after_commit :analyze_document, on: :create
 
   # State machine
   # Valid transitions:

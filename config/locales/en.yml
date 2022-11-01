@@ -86,6 +86,9 @@ en:
     admin_user:
       not_allowed: "Only administrators can access this page."
   documents:
+    validators:
+      unique_doc:
+        exists: "This document is already in the system"
     form:
       upload: "Upload"
     create:
@@ -97,3 +100,5 @@ en:
       failure: "Document not deleted"
     index:
       no_docs: "No documents yet"
+    new:
+      title: "Upload document"
