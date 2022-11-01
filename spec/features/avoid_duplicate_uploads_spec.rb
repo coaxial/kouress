@@ -30,7 +30,7 @@ RSpec.describe 'AvoidDuplicateUploads', type: :feature do
       end
 
       it 'shows a message' do
-        expect(page).to have_text("Couldn't create document")
+        expect(page).to have_text('document is already')
       end
     end
   end

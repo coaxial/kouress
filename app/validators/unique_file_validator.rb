@@ -6,6 +6,6 @@ class UniqueFileValidator < ActiveModel::Validator
     return unless ActiveStorage::Blob.find_by(checksum: record.file.checksum)
 
     record.errors.add :file,
-                      I18n.t('documents.validators.unique_doc.doc_exists')
+                      I18n.t('documents.validators.unique_doc.exists')
   end
 end

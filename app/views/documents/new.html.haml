@@ -1,5 +1,11 @@
-%h1 Upload document
+%h1= t('documents.new.title')
 = form_for @document do |f|
+  - if @document.errors.any?
+    %div.error_messages.bg-red-500
+      %ul
+        - @document.errors.full_messages.each do |message|
+          %li= message
+
   %div.field
     = f.label :file
     = f.file_field :file, accept: 'application/pdf'

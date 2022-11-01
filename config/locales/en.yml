@@ -100,3 +100,5 @@ en:
       failure: "Document not deleted"
     index:
       no_docs: "No documents yet"
+    new:
+      title: "Upload document"
