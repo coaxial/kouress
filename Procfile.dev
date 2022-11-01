@@ -2,3 +2,4 @@ web: bin/rails server -p 3000
 js: yarn build --watch
 css: yarn build:css --watch
 redis: docker run --rm --name redis-kouress -p 6379:6379 redis
+sidekiq: bundle exec sidekiq
