@@ -21,6 +21,7 @@ The version is specified in `.nvmrc`, currently 16.17.1
 - Enable `corepack` with `corepack enable`
 - Install JS dependencies: `yarn install`
 - Install libvips: `apt install libvips`
+- Install tesseract: `apt install tesseract-ocr` (and whatever languages you need; `tesseract-ocr-deu` for instance)
 
 ### Run the development server and redis
 
