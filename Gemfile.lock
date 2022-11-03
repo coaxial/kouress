@@ -189,6 +189,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
+    pg (1.4.4)
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -346,6 +347,7 @@ DEPENDENCIES
   jbuilder
   jsbundling-rails
   pdf-reader
+  pg
   puma (~> 5.0)
   rails (~> 7.0.4)
   rails-controller-testing
