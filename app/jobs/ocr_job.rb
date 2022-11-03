@@ -30,6 +30,8 @@ class OcrJob < ApplicationJob
 
     # So, there was no embedded text.
     # Convert to image
+    page.preview(page_num: 2)
+    debugger
     # see https://github.com/rails/rails/blob/f95c0b7e96eb36bc3efc0c5beffbb9e84ea664e4/activestorage/lib/active_storage/previewer.rb#L29-L92
     # Pass to tesseract
   end
