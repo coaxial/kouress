@@ -2,6 +2,7 @@
 
 class OcrJob < ApplicationJob
   queue_as :default
+  attr_reader :page_id
 
   def perform(page_id)
     @page_id = page_id
@@ -11,7 +12,7 @@ class OcrJob < ApplicationJob
   private
 
   def page
-    Page.find(@page_id)
+    Page.find(page_id)
   end
 
   def document
@@ -24,12 +25,14 @@ class OcrJob < ApplicationJob
 
   def text
     reader = PDF::Reader.new(path)
-    reader.page(page.page_no).text
-    # return embedded_text if embedded_text.present?
+    embedded_text = reader.page(page.page_no).text
+    return embedded_text if embedded_text.present?
 
     # So, there was no embedded text.
     # Convert to image
     # see https://github.com/rails/rails/blob/f95c0b7e96eb36bc3efc0c5beffbb9e84ea664e4/activestorage/lib/active_storage/previewer.rb#L29-L92
     # Pass to tesseract
   end
+
+  def convert_page_to_image; end
 end

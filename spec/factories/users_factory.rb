@@ -6,7 +6,7 @@ FactoryBot.define do
   end
 
   factory :user do
-    username { generate :username }
+    username { generate(:username) }
     email { "#{username}@example.org" }
     password { 'supersecure' }
     admin { false }

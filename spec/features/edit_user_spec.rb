@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'EditUsers', type: :feature do
+RSpec.describe 'EditUsers' do
   subject { page }
 
   let(:submit_label) { 'shared.users.form.update' }

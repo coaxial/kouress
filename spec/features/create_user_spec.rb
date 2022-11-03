@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'CreateUsers', type: :feature do
-  let(:user) { create :user }
-  let(:admin) { create :admin }
-  let(:new_user) { build :user }
+RSpec.describe 'CreateUsers' do
+  let(:user) { create(:user) }
+  let(:admin) { create(:admin) }
+  let(:new_user) { build(:user) }
   let(:new_user_form) do
     {
       Username: new_user.username,

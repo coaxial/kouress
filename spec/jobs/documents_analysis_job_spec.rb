@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DocumentsAnalysisJob, type: :job do
+RSpec.describe DocumentsAnalysisJob do
   include ActiveJob::TestHelper
 
   context 'with a PDF file' do

@@ -3,6 +3,11 @@
 class DocumentsController < ApplicationController
   before_action :reject_unsupported_mimetypes, only: :create
 
+  def index
+    # FIXME: paginate this
+    @documents = Document.all
+  end
+
   def new
     @document = Document.new
   end
@@ -15,11 +20,6 @@ class DocumentsController < ApplicationController
       flash.now.alert = t('.failure')
       render 'new', status: :unprocessable_entity
     end
-  end
-
-  def index
-    # FIXME: paginate this
-    @documents = Document.all
   end
 
   def destroy

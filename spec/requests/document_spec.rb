@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Documents', type: :request do
+RSpec.describe 'Documents' do
   describe 'GET /index' do
     context 'when not logged in' do
       before { get documents_path }

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'DeleteUsers', type: :feature do
+RSpec.describe 'DeleteUsers' do
   let(:admin) { create(:admin) }
   let!(:user) { create(:user) }
 

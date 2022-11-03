@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'SingleDocumentUploads', type: :feature do
+RSpec.describe 'SingleDocumentUploads' do
   let(:user) { create(:user) }
 
   before do

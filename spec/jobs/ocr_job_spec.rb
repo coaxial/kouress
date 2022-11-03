@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe OcrJob, type: :job do
+RSpec.describe OcrJob do
   include ActiveJob::TestHelper
 
   after { clear_enqueued_jobs }
@@ -13,7 +13,7 @@ RSpec.describe OcrJob, type: :job do
     end
 
     context 'when there is text embedded' do
-      let!(:document) { create :document }
+      let!(:document) { create(:document) }
 
       before { described_class.perform_now(document.pages.first.id) }
 
@@ -23,7 +23,7 @@ RSpec.describe OcrJob, type: :job do
     end
 
     context 'when there is no text embedded' do
-      let!(:document) { create :document_without_embedded_text }
+      let!(:document) { create(:document_without_embedded_text) }
 
       before { described_class.perform_now(document.pages.first.id) }
 
