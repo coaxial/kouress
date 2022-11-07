@@ -17,8 +17,9 @@ RSpec.describe 'SingleDocumentUploads' do
     end
 
     it 'can upload a document' do
+      document = Document.last
       visit documents_path
-      expect(page).to have_selector('.document-1')
+      expect(page).to have_selector("#document-#{document.id}")
     end
 
     it 'shows a success message' do

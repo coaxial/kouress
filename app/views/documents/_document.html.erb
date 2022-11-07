@@ -1,4 +1,4 @@
-<div class=<%= "document-#{document.id}" %>>
+<div id=<%= "document-#{document.id}" %>>
   <h1><%= document.original_filename %></h1>
   <div>
     <%= render partial: 'shared/document/metadata', locals: { document: } %>
