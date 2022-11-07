@@ -22,6 +22,10 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def show
+    @document = Document.find(params[:id])
+  end
+
   def destroy
     @document = Document.find(params[:id])
     if @document.destroy

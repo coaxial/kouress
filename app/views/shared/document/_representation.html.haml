@@ -1,0 +1,7 @@
+%div
+  - if document.file.representable?
+    = link_to document do
+      = image_tag document.file.representation(resize_to_limit: [500, 500])
+  - else
+    %p= t('.no_representation')
+%div
