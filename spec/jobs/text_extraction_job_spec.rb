@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe OcrJob do
+RSpec.describe TextExtractionJob do
   include ActiveJob::TestHelper
 
   after { clear_enqueued_jobs }
@@ -19,7 +19,7 @@ RSpec.describe OcrJob do
         described_class.perform_now(document.pages.first.id)
       end
 
-      it 'extracts the text', :focus do
+      it 'extracts the text' do
         expect(document.pages.first.text.squish).to include(text)
       end
     end
