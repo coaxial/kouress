@@ -28,10 +28,10 @@ class DocumentsAnalysisJob < ApplicationJob
       #   pdftoppm can't find the file?
       # TODO: handle images that need OCR to get the text
       page = Page.new(document:, page_num: pdf_page.number, text: nil)
-      png_file = page_to_image(pdf_page.number, reader.pages.count)
-      page.image.attach(io: File.open(png_file), filename: File.basename(png_file).to_s, content_type: 'image/png')
+      # png_file = page_to_image(pdf_page.number, reader.pages.count)
+      # page.image.attach(io: File.open(png_file), filename: File.basename(png_file).to_s, content_type: 'image/png')
       page.save
-      File.delete(png_file)
+      # File.delete(png_file)
     end
   end
 

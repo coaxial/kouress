@@ -15,9 +15,7 @@ RSpec.describe TextExtractionJob do
     context 'when there is text embedded' do
       let!(:document) { create(:document) }
 
-      before do
-        described_class.perform_now(document.pages.first.id)
-      end
+      before { described_class.perform_now(document.pages.first.id) }
 
       it 'extracts the text' do
         expect(document.pages.first.text.squish).to include(text)
