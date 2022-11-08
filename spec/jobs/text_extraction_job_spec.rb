@@ -13,26 +13,33 @@ RSpec.describe TextExtractionJob do
     end
 
     context 'when there is text embedded' do
-      let!(:document) { create(:document) }
+      let(:document) { create(:document) }
 
       before do
         document.pages.each do |page|
           GeneratePageImageJob.perform_now(page.id)
         end
         described_class.perform_now(document.pages.first.id)
+        document.reload
       end
 
-      it 'extracts the text', :focus do
-        raise 'Page image attachment missing' unless document.pages.first.image.attached?
-
+      it 'extracts the text' do
         expect(document.pages.first.text.squish).to include(text)
       end
     end
 
     context 'when there is no text embedded' do
-      let!(:document) { create(:document_without_embedded_text) }
+      let(:document) { create(:document_without_embedded_text) }
 
-      before { described_class.perform_now(document.pages.first.id) }
+      before do
+        document.pages.each do |page|
+          GeneratePageImageJob.perform_now(page.id)
+        end
+        raise 'Page image attachment missing' unless document.pages.first.image.attached?
+
+        described_class.perform_now(document.pages.first.id)
+        document.reload
+      end
 
       it 'extracts the text' do
         expect(document.pages.first.text.squish).to include(text)
