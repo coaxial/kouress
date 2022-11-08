@@ -4,9 +4,14 @@ class Page < ApplicationRecord
   belongs_to :document
   has_one_attached :image
   default_scope { order(:page_num) }
+  after_commit :generate_page_image, on: :create
   after_commit :extract_text, on: :create
 
   private
+
+  def generate_page_image
+    GeneratePageImageJob.perform_later(id)
+  end
 
   def extract_text
     TextExtractionJob.perform_later(id)

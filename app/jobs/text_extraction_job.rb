@@ -2,12 +2,16 @@
 
 class TextExtractionJob < ApplicationJob
   queue_as :default
-  attr_reader :page_id, :text
+  retry_on ActiveStorage::FileNotFoundError, wait: :exponentially_longer
+  attr_reader :page_id
 
   def perform(page_id)
     @page_id = page_id
-    extract_text
-    page.update(text:)
+    if page.image.attached?
+      raise 'Failed to extract text' unless page.update(text: extracted_text)
+    else
+      raise ActiveStorage::FileNotFoundError
+    end
   end
 
   private
@@ -32,7 +36,7 @@ class TextExtractionJob < ApplicationJob
     path_for(page.image)
   end
 
-  def extract_text
+  def extracted_text
     return @text if defined?(@text)
 
     # First try and see if there is any embedded text

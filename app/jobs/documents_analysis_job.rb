@@ -19,6 +19,13 @@ class DocumentsAnalysisJob < ApplicationJob
     Document.find(@document_id)
   end
 
+  def paginate_document
+    if document.file.attached?
+      create_pages
+      document.paginate
+    end
+  end
+
   def create_pages
     @document_path = ActiveStorage::Blob.service.path_for(document.file.key)
     reader = PDF::Reader.new(document_path)
@@ -32,13 +39,6 @@ class DocumentsAnalysisJob < ApplicationJob
       # page.image.attach(io: File.open(png_file), filename: File.basename(png_file).to_s, content_type: 'image/png')
       page.save
       # File.delete(png_file)
-    end
-  end
-
-  def paginate_document
-    if document.file.attached?
-      create_pages
-      document.paginate
     end
   end
 
@@ -56,7 +56,6 @@ class DocumentsAnalysisJob < ApplicationJob
     png_file = "#{ppm_root}-#{"%0#{page_total.to_s.length}i" % page_num}.png"
 
     system(pdftoppm_path, '-f', page_num.to_s, '-l', page_num.to_s, '-cropbox', '-png', document_path, ppm_root)
-    Rails.logger.debug { "****************************************** #{page_num}: #{png_file}" }
 
     png_file
   end

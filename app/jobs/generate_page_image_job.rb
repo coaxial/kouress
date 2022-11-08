@@ -8,6 +8,7 @@ class GeneratePageImageJob < ApplicationJob
     @page_id = page_id
     page_to_image
     attach_image
+  ensure
     delete_image_file
   end
 
