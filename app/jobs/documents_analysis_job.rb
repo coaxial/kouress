@@ -31,32 +31,8 @@ class DocumentsAnalysisJob < ApplicationJob
     reader = PDF::Reader.new(document_path)
 
     reader.pages.each do |pdf_page|
-      # FIXME: race condition where pages don't always get created, because
-      #   pdftoppm can't find the file?
-      # TODO: handle images that need OCR to get the text
       page = Page.new(document:, page_num: pdf_page.number, text: nil)
-      # png_file = page_to_image(pdf_page.number, reader.pages.count)
-      # page.image.attach(io: File.open(png_file), filename: File.basename(png_file).to_s, content_type: 'image/png')
       page.save
-      # File.delete(png_file)
     end
-  end
-
-  def pdftoppm_path
-    ActiveStorage.paths[:pdftoppm] || 'pdftoppm'
-  end
-
-  def page_to_image(page_num, page_total)
-    directory = File.dirname(document_path)
-    basename = File.basename(document_path, '.*')
-    ppm_root = File.join(directory, basename)
-    # pdftoppm pads page numbers with zeroes if more than 9 pages in the
-    # document. See
-    # https://gitlab.freedesktop.org/poppler/poppler/-/issues/1312
-    png_file = "#{ppm_root}-#{"%0#{page_total.to_s.length}i" % page_num}.png"
-
-    system(pdftoppm_path, '-f', page_num.to_s, '-l', page_num.to_s, '-cropbox', '-png', document_path, ppm_root)
-
-    png_file
   end
 end

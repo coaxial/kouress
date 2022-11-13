@@ -7,7 +7,10 @@ class TextExtractionJob < ApplicationJob
 
   def perform(page_id)
     @page_id = page_id
+    # In case this job is run before the GeneratePageImageJob, then do
+    # nothing and retry later once the page image has been generated.
     if page.image.attached?
+      # TODO: Proper error handling
       raise 'Failed to extract text' unless page.update(text: extracted_text)
     else
       raise ActiveStorage::FileNotFoundError
@@ -21,7 +24,7 @@ class TextExtractionJob < ApplicationJob
   end
 
   def document
-    Document.find(page.document.id)
+    page.document
   end
 
   def path_for(attachment)
@@ -37,6 +40,8 @@ class TextExtractionJob < ApplicationJob
   end
 
   def extracted_text
+    # This is an expensive operation if OCR is required so cache the OCRed
+    # text.
     return @text if defined?(@text)
 
     # First try and see if there is any embedded text
@@ -54,6 +59,4 @@ class TextExtractionJob < ApplicationJob
   def tesseract_path
     ActiveStorage.paths[:tesseract] || 'tesseract'
   end
-
-  def convert_page_to_image; end
 end

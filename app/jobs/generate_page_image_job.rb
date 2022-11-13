@@ -6,8 +6,8 @@ class GeneratePageImageJob < ApplicationJob
 
   def perform(page_id)
     @page_id = page_id
-    page_to_image
-    attach_image
+    page_to_image!
+    attach_image!
   ensure
     delete_image_file
   end
@@ -30,7 +30,8 @@ class GeneratePageImageJob < ApplicationJob
     ActiveStorage.paths[:pdftoppm] || 'pdftoppm'
   end
 
-  def page_to_image
+  # Generates a PNG image for the current PDF page
+  def page_to_image!
     return @png_file_path if defined?(@png_file_path)
 
     directory = File.dirname(document_file_path)
@@ -43,14 +44,15 @@ class GeneratePageImageJob < ApplicationJob
     # filenames when computing the png's file path.
     padding_zeroes_count = document.pages.count.to_s.length
 
-    system(pdftoppm_path, '-f', page.page_num.to_s, '-l', page.page_num.to_s, '-cropbox', '-png', document_file_path,
-           ppm_root)
+    # TODO: proper error handling
+    raise 'pdftoppm failed' unless system(pdftoppm_path, '-f', page.page_num.to_s, '-l', page.page_num.to_s, '-cropbox', '-png', document_file_path,
+                                          ppm_root)
 
     @png_file_path = "#{ppm_root}-#{"%0#{padding_zeroes_count}i" % page.page_num}.png"
     @png_file_path
   end
 
-  def attach_image
+  def attach_image!
     page.image.attach(io: File.open(@png_file_path), filename: File.basename(@png_file_path), content_type: 'image/png')
   end
 
