@@ -1,4 +1,4 @@
-= link_to t('documents.show.back'), documents_path
+= link_to t('documents.show.back'), :back
 %h1= @document.original_filename
 = render partial: 'shared/document/metadata', locals: { document: @document }
 = render partial: 'shared/document/delete', locals: { document: @document }

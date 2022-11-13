@@ -45,7 +45,13 @@ en:
         delete: "Delete"
     document:
       metadata:
+        size: "Size"
+        mimetype: "Mimetype"
+        created: "Created"
         ago: "ago"
+        pages:
+          one: "page"
+          other: "pages"
       download:
         download_file: "Download file"
       representation:
@@ -103,4 +109,4 @@ en:
     new:
       title: "Upload document"
     show:
-      back: "Back to all documents"
+      back: "Back"
