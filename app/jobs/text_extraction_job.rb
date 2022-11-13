@@ -6,6 +6,7 @@
 class TextExtractionJob < ApplicationJob
   queue_as :default
   retry_on ActiveStorage::FileNotFoundError, wait: :exponentially_longer
+  discard_on ActiveRecord::RecordNotFound
   attr_reader :page_id
 
   def perform(page_id)
@@ -13,7 +14,10 @@ class TextExtractionJob < ApplicationJob
     @page_id = page_id
     # In case this job is run before the GeneratePageImageJob, then do
     # nothing and retry later once the page image has been generated.
-    raise ActiveStorage::FileNotFoundError unless page.image.attached?
+    unless page.image.attached?
+      page.fail
+      raise ActiveStorage::FileNotFoundError
+    end
 
     if page.update(text: extracted_text)
       page.text_extracted

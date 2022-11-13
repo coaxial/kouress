@@ -5,13 +5,16 @@
 # document's pages.
 class GeneratePageImageJob < ApplicationJob
   queue_as :default
+  discard_on ActiveRecord::RecordNotFound
   attr_reader :page_id
 
   def perform(page_id)
     @page_id = page_id
-    page_to_image!
-    attach_image!
-    page.image_generated
+    if page_to_image! && attach_image!
+      page.image_generated
+    else
+      page.fail
+    end
   ensure
     delete_image_file
   end

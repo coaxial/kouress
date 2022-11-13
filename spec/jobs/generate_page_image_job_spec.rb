@@ -23,7 +23,14 @@ RSpec.describe GeneratePageImageJob, type: :job do
     end
 
     context "when the page's job fails" do
-      pending 'changes state to failed'
+      before do
+        allow_any_instance_of(ActiveStorage::Attached::One).to receive(:attach).and_return(false)
+        described_class.perform_now(document.pages.first.id)
+      end
+
+      it 'changes state to failed' do
+        expect(document.pages.first).to be_failed
+      end
     end
   end
 end

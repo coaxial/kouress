@@ -63,6 +63,15 @@ RSpec.describe TextExtractionJob do
   end
 
   context 'when the job errors' do
-    pending 'changes state to failed'
+    let(:document) { create(:document) }
+
+    before do
+      allow_any_instance_of(Page).to receive(:update).and_return(false)
+      described_class.perform_now(document.pages.first.id)
+    end
+
+    it 'changes state to failed' do
+      expect(document.pages.first).to be_failed
+    end
   end
 end
