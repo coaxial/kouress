@@ -10,10 +10,20 @@ RSpec.describe GeneratePageImageJob, type: :job do
   context 'with a PDF file' do
     let!(:document) { create(:document) }
 
-    before { described_class.perform_now(document.pages.first.id) }
+    context "when the page's job succeeds" do
+      before { described_class.perform_now(document.pages.first.id) }
 
-    it "attaches the page's image" do
-      expect(document.pages.first.image).to be_attached
+      it "attaches the page's image" do
+        expect(document.pages.first.image).to be_attached
+      end
+
+      it 'changes state to image_generated' do
+        expect(document.pages.first).to be_image_generated
+      end
+    end
+
+    context "when the page's job fails" do
+      pending 'changes state to failed'
     end
   end
 end

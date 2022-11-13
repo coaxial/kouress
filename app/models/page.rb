@@ -2,10 +2,45 @@
 
 class Page < ApplicationRecord
   belongs_to :document
+  has_many :events, dependent: :delete_all, class_name: 'PageProcessingEvent'
   has_one_attached :image
   default_scope { order(:page_num) }
   after_commit :generate_page_image, on: :create
   after_commit :extract_text, on: :create
+  after_commit :update_document_state, on: :update
+
+  # State machine
+  # Valid transitions:
+  # unprocessed => image_generated => text_extracted  => processed
+  #             => failed          => image_generated => processed
+  #                                => failed          => image_generated => processed
+  STATES = %w[unprocessed image_generated text_extracted processed failed].freeze
+  delegate :unprocessed?, :image_generated?, :text_extracted?, :processed?, :failed?, to: :current_state
+
+  def current_state
+    (events.last.try(:state) || STATES.first).inquiry
+  end
+
+  def process
+    events.create! state: 'processed' if paginated?
+  end
+
+  def image_generated
+    events.create! state: 'image_generated' if unprocessed? || failed?
+  end
+
+  def text_extracted
+    events.create! state: 'text_extracted' if image_generated? || failed?
+  end
+
+  def fail
+    events.create! state: 'failed' if unprocessed? || image_generated?
+  end
+
+  def self.unprocessed
+    joins(:events).merge PageProcessingEvent.with_last_state('unprocessed')
+  end
+  # /State machine
 
   private
 
@@ -16,4 +51,6 @@ class Page < ApplicationRecord
   def extract_text
     TextExtractionJob.perform_later(id)
   end
+
+  def update_document_state; end
 end

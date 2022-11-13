@@ -1,19 +1,25 @@
 # frozen_string_literal: true
 
+# This job extracts the text within the page. If the PDF file has embedded
+# text, then it will use that. If it doesn't, then it will OCR the page's
+# image.
 class TextExtractionJob < ApplicationJob
   queue_as :default
   retry_on ActiveStorage::FileNotFoundError, wait: :exponentially_longer
   attr_reader :page_id
 
   def perform(page_id)
+    # TODO: Proper error handling
     @page_id = page_id
     # In case this job is run before the GeneratePageImageJob, then do
     # nothing and retry later once the page image has been generated.
-    if page.image.attached?
-      # TODO: Proper error handling
-      raise 'Failed to extract text' unless page.update(text: extracted_text)
+    raise ActiveStorage::FileNotFoundError unless page.image.attached?
+
+    if page.update(text: extracted_text)
+      page.text_extracted
     else
-      raise ActiveStorage::FileNotFoundError
+      page.fail
+      raise 'Failed to extract text'
     end
   end
 

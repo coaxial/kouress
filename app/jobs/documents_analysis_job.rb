@@ -20,10 +20,8 @@ class DocumentsAnalysisJob < ApplicationJob
   end
 
   def paginate_document
-    if document.file.attached?
-      create_pages
-      document.paginate
-    end
+    create_pages
+    document.paginate
   end
 
   def create_pages

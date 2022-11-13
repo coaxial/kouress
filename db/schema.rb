@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_07_105346) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_13_105309) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -59,6 +59,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_105346) do
     t.index ["original_filename"], name: "index_documents_on_original_filename"
   end
 
+  create_table "page_processing_events", force: :cascade do |t|
+    t.bigint "page_id", null: false
+    t.string "state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["page_id"], name: "index_page_processing_events_on_page_id"
+  end
+
   create_table "pages", force: :cascade do |t|
     t.bigint "document_id", null: false
     t.integer "page_num", null: false
@@ -82,5 +90,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_105346) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "document_processing_events", "documents"
+  add_foreign_key "page_processing_events", "pages"
   add_foreign_key "pages", "documents"
 end
