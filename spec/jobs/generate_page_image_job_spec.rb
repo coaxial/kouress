@@ -24,7 +24,8 @@ RSpec.describe GeneratePageImageJob, type: :job do
 
     context "when the page's job fails" do
       before do
-        allow_any_instance_of(ActiveStorage::Attached::One).to receive(:attach).and_return(false)
+        # allow_any_instance_of(ActiveStorage::Attached::One).to receive(:attach).and_return(false)
+        allow(document.pages.first.image).to receive(:attach).and_return(false)
         described_class.perform_now(document.pages.first.id)
       end
 

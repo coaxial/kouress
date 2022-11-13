@@ -64,13 +64,29 @@ RSpec.describe TextExtractionJob do
 
   context 'when the job errors' do
     let(:document) { create(:document) }
+    let(:mock_page) { double(document.pages.first) }
 
     before do
-      allow_any_instance_of(Page).to receive(:update).and_return(false)
-      described_class.perform_now(document.pages.first.id)
+      document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
+      # allow(Page).to receive(:new).and_return(page)
+      # allow(page).to receive(:update).and_return(false)
+      # document.reload
     end
 
-    it 'changes state to failed' do
+    it 'changes state to failed', :focus do
+      # page = object_double(Page.new, update: false)
+      # double('Page', update: false)
+      # mock_page = double('Page')
+      # allow(Page).to receive(:find).and_return(mock_page)
+      allow(mock_page).to receive(:update).and_return(false)
+      allow(mock_page).to receive(:image)
+      allow(mock_page.image).to receive(:attached?)
+      # allow(mock_page).to receive(:update).and_return(false)
+      # allow(document.pages.first).to receive(:update).and_return(false)
+
+      # described_class.perform_now(document.pages.first.id, mock_page)
+      # expect(mock_page.update(text: 'bar')).to be('weeeee')
+      described_class.perform_now(document.pages.first.id, mock_page)
       expect(document.pages.first).to be_failed
     end
   end

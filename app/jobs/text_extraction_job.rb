@@ -7,30 +7,22 @@ class TextExtractionJob < ApplicationJob
   queue_as :default
   retry_on ActiveStorage::FileNotFoundError, wait: :exponentially_longer
   discard_on ActiveRecord::RecordNotFound
-  attr_reader :page_id
+  attr_reader :page_id, :page_instance
 
-  def perform(page_id)
+  def perform(page_id, page_instance = nil)
     # TODO: Proper error handling
     @page_id = page_id
+    @page_instance = page_instance unless page_instance.nil?
     # In case this job is run before the GeneratePageImageJob, then do
     # nothing and retry later once the page image has been generated.
-    unless page.image.attached?
-      page.fail
-      raise ActiveStorage::FileNotFoundError
-    end
-
-    if page.update(text: extracted_text)
-      page.text_extracted
-    else
-      page.fail
-      raise 'Failed to extract text'
-    end
+    handle_missing_attachment unless page.image.attached?
+    add_text_to_page
   end
 
   private
 
   def page
-    Page.find(page_id)
+    page_instance || Page.find(page_id)
   end
 
   def document
@@ -47,6 +39,11 @@ class TextExtractionJob < ApplicationJob
 
   def page_image_path
     path_for(page.image)
+  end
+
+  def handle_missing_attachment
+    page.fail
+    raise ActiveStorage::FileNotFoundError
   end
 
   def extracted_text
@@ -68,5 +65,14 @@ class TextExtractionJob < ApplicationJob
 
   def tesseract_path
     ActiveStorage.paths[:tesseract] || 'tesseract'
+  end
+
+  def add_text_to_page
+    if page.update(text: extracted_text)
+      page.text_extracted
+    else
+      page.fail
+      raise 'Failed to extract text'
+    end
   end
 end
