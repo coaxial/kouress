@@ -7,12 +7,12 @@ class TextExtractionJob < ApplicationJob
   queue_as :default
   retry_on ActiveStorage::FileNotFoundError, wait: :exponentially_longer
   discard_on ActiveRecord::RecordNotFound
-  attr_reader :page_id, :page_instance
+  attr_reader :page_id, :tesseract_cmd
 
-  def perform(page_id, page_instance = nil)
+  def perform(page_id, tesseract_cmd = nil)
     # TODO: Proper error handling
     @page_id = page_id
-    @page_instance = page_instance unless page_instance.nil?
+    @tesseract_cmd = tesseract_cmd
     # In case this job is run before the GeneratePageImageJob, then do
     # nothing and retry later once the page image has been generated.
     handle_missing_attachment unless page.image.attached?
@@ -22,7 +22,7 @@ class TextExtractionJob < ApplicationJob
   private
 
   def page
-    page_instance || Page.find(page_id)
+    Page.find(page_id)
   end
 
   def document
@@ -46,6 +46,17 @@ class TextExtractionJob < ApplicationJob
     raise ActiveStorage::FileNotFoundError
   end
 
+  # Executes tesseract and either handles failure or returns the OCRed text
+  # from the page image.
+  def run_tesseract
+    # TODO: Use all installed languages or the doc's language
+    stdout, stderr, status = Open3.capture3(tesseract_path, page_image_path, 'stdout')
+
+    handle_job_failure('tesseract', [stdout, stderr, status]) unless status.success?
+
+    stdout
+  end
+
   def extracted_text
     # This is an expensive operation if OCR is required so cache the OCRed
     # text.
@@ -58,25 +69,27 @@ class TextExtractionJob < ApplicationJob
     return embedded_text if embedded_text.present?
 
     # If there isn't, use tesseract
-    # TODO: Use all installed languages or the doc's language
-    @text = `#{tesseract_path} #{page_image_path} stdout`
+    @text = run_tesseract
     @text
   end
 
   def tesseract_path
-    ActiveStorage.paths[:tesseract] || 'tesseract'
+    tesseract_cmd || ActiveStorage.paths[:tesseract] || 'tesseract'
   end
 
-  def handle_job_failure(step)
+  def handle_job_failure(step, context = nil)
     page.fail
-    raise "error running #{step}"
+    msg = "error running #{step}"
+    msg << ": #{context.inspect}" if context
+
+    raise msg
   end
 
   def add_text_to_page
     if page.update(text: extracted_text)
       page.text_extracted
     else
-      handle_job_failure
+      handle_job_failure('update page.text')
     end
   end
 end

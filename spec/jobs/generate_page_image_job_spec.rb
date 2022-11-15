@@ -23,17 +23,25 @@ RSpec.describe GeneratePageImageJob, type: :job do
     end
 
     context "when the page's job fails" do
+      # Intentionally fail the pdftoppm command
+      let(:pdftoppm_cmd) { 'false' }
+
       before do
-        # Intentionally fail the pdftoppm command
-        ActiveStorage.paths[:pdftoppm] = 'false'
-        begin
-          described_class.perform_now(document.pages.first.id)
-        rescue StandardError
-        end
+        described_class.perform_now(document.pages.first.id, pdftoppm_cmd)
+        # This is intentional, the job is meant to fail because pdftoppm_cmd
+        # is `false` which will always exit 1.
+      rescue StandardError # rubocop:disable Lint/SuppressedException
       end
 
       it 'changes state to failed' do
         expect(document.pages.first).to be_failed
+      end
+
+      it "includes the command's context in the error" do
+        expect do
+          described_class.perform_now(document.pages.first.id,
+                                      pdftoppm_cmd)
+        end.to raise_error.with_message(/.*pdftoppm.*Process::Status.*/)
       end
     end
   end

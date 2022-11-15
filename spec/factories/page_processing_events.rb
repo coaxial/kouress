@@ -2,5 +2,6 @@
 
 FactoryBot.define do
   factory :page_processing_event do
+    page { nil }
   end
 end

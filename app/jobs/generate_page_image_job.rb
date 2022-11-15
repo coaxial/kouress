@@ -3,15 +3,17 @@
 # This job generates a PNG image for each page in the PDF document. These
 # images will later be used for OCR (if required) and for previewing the
 # document's pages.
+require 'English'
 class GeneratePageImageJob < ApplicationJob
   queue_as :default
   discard_on ActiveRecord::RecordNotFound
   attr_reader :page_id
 
-  def perform(page_id)
+  def perform(page_id, pdftoppm_cmd = nil)
     @page_id = page_id
-    page_to_image!
-    attach_image!
+    @pdftoppm_cmd = pdftoppm_cmd
+    convert_page_to_image
+    attach_image_to_page
     page.image_generated
   ensure
     delete_image_file
@@ -32,7 +34,7 @@ class GeneratePageImageJob < ApplicationJob
   end
 
   def pdftoppm_path
-    ActiveStorage.paths[:pdftoppm] || 'pdftoppm'
+    @pdftoppm_cmd || ActiveStorage.paths[:pdftoppm] || 'pdftoppm'
   end
 
   def ppm_root
@@ -41,12 +43,19 @@ class GeneratePageImageJob < ApplicationJob
     File.join(directory, basename)
   end
 
-  def convert_page_to_ppm!
-    system(pdftoppm_path, '-f',
-           page.page_num.to_s, '-l',
-           page.page_num.to_s, '-cropbox',
-           '-png', document_file_path,
-           ppm_root)
+  # Runs the pdftoppm command and returns true or false whether the command
+  # succeeded or not.
+  # Kinda like Kernel.system but we also capture stdout and stderr to help
+  # with error logging.
+  def run_pdftoppm
+    command_status = 2
+    @pdftoppm_cmd_output = Open3.capture3(pdftoppm_path, '-f',
+                                          page.page_num.to_s, '-l',
+                                          page.page_num.to_s, '-cropbox',
+                                          '-png', document_file_path,
+                                          ppm_root)
+
+    @pdftoppm_cmd_output[command_status].success?
   end
 
   def png_file_path
@@ -58,21 +67,25 @@ class GeneratePageImageJob < ApplicationJob
     @png_file_path
   end
 
-  def handle_job_failure(step)
+  def handle_job_failure(step, res = '')
     page.fail
-    raise "error running #{step}"
+    raise "error running #{step}, document: #{document.inspect}, page: #{page.inspect}, res: #{res.inspect}"
   end
 
   # Generates a PNG image for the current PDF page
-  def page_to_image!
+  def convert_page_to_image
     # TODO: proper error handling
-    handle_job_failure('pdftoppm') unless convert_page_to_ppm!
+    conversion_success = run_pdftoppm
+    handle_job_failure('pdftoppm', @pdftoppm_cmd_output) unless conversion_success
 
     png_file_path
   end
 
-  def attach_image!
-    handle_job_failure('attach image') unless page.image.attach(io: File.open(png_file_path), filename: File.basename(png_file_path),
+  def attach_image_to_page
+    handle_job_failure('attach image') unless page.image.attach(io:
+                                                                File.open(png_file_path),
+                                                                filename:
+                                                                File.basename(png_file_path),
                                                                 content_type: 'image/png')
   end
 
