@@ -10,11 +10,9 @@ class GeneratePageImageJob < ApplicationJob
 
   def perform(page_id)
     @page_id = page_id
-    if page_to_image! && attach_image!
-      page.image_generated
-    else
-      page.fail
-    end
+    page_to_image!
+    attach_image!
+    page.image_generated
   ensure
     delete_image_file
   end
@@ -60,16 +58,22 @@ class GeneratePageImageJob < ApplicationJob
     @png_file_path
   end
 
+  def handle_job_failure(step)
+    page.fail
+    raise "error running #{step}"
+  end
+
   # Generates a PNG image for the current PDF page
   def page_to_image!
     # TODO: proper error handling
-    raise 'pdftoppm failed' unless convert_page_to_ppm!
+    handle_job_failure('pdftoppm') unless convert_page_to_ppm!
 
     png_file_path
   end
 
   def attach_image!
-    page.image.attach(io: File.open(png_file_path), filename: File.basename(png_file_path), content_type: 'image/png')
+    handle_job_failure('attach image') unless page.image.attach(io: File.open(png_file_path), filename: File.basename(png_file_path),
+                                                                content_type: 'image/png')
   end
 
   def delete_image_file

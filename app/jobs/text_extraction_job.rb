@@ -67,12 +67,16 @@ class TextExtractionJob < ApplicationJob
     ActiveStorage.paths[:tesseract] || 'tesseract'
   end
 
+  def handle_job_failure(step)
+    page.fail
+    raise "error running #{step}"
+  end
+
   def add_text_to_page
     if page.update(text: extracted_text)
       page.text_extracted
     else
-      page.fail
-      raise 'Failed to extract text'
+      handle_job_failure
     end
   end
 end
