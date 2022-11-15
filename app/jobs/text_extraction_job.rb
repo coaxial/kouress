@@ -7,28 +7,27 @@ class TextExtractionJob < ApplicationJob
   queue_as :default
   retry_on ActiveStorage::FileNotFoundError, wait: :exponentially_longer
   discard_on ActiveRecord::RecordNotFound
-  attr_reader :page_id, :tesseract_cmd
+  attr_reader :page, :document, :tesseract_cmd
 
+  # @param page_id [Integer, String] the ID for the page to process
+  # @param tesseract_cmd [String] the command to use as tesseract
   def perform(page_id, tesseract_cmd = nil)
     # TODO: Proper error handling
-    @page_id = page_id
+    @page = Page.find(page_id)
+    @document = page.document
     @tesseract_cmd = tesseract_cmd
+
     # In case this job is run before the GeneratePageImageJob, then do
     # nothing and retry later once the page image has been generated.
     handle_missing_attachment unless page.image.attached?
+
     add_text_to_page
   end
 
   private
 
-  def page
-    Page.find(page_id)
-  end
-
-  def document
-    page.document
-  end
-
+  # @param attachment [ActiveStorage::Attached] the ActiveStorage attachment to get the path for
+  # @return [String] the path to the attachment
   def path_for(attachment)
     ActiveStorage::Blob.service.path_for(attachment.key)
   end
@@ -41,6 +40,7 @@ class TextExtractionJob < ApplicationJob
     path_for(page.image)
   end
 
+  # @raise ActiveStorage::FileNotFoundError
   def handle_missing_attachment
     page.fail
     raise ActiveStorage::FileNotFoundError
@@ -48,6 +48,7 @@ class TextExtractionJob < ApplicationJob
 
   # Executes tesseract and either handles failure or returns the OCRed text
   # from the page image.
+  # @return [String] stdout from running tesseract on the page's image
   def run_tesseract
     # TODO: Use all installed languages or the doc's language
     stdout, stderr, status = Open3.capture3(tesseract_path, page_image_path, 'stdout')
@@ -57,6 +58,9 @@ class TextExtractionJob < ApplicationJob
     stdout
   end
 
+  # Extracts the text from Page, either using the text embedded in the PDF
+  # page, or via OCR with the page's image
+  # @return [String] the extracted text
   def extracted_text
     # This is an expensive operation if OCR is required so cache the OCRed
     # text.
@@ -77,6 +81,7 @@ class TextExtractionJob < ApplicationJob
     tesseract_cmd || ActiveStorage.paths[:tesseract] || 'tesseract'
   end
 
+  # @raise [StandardError] what went wrong
   def handle_job_failure(step, context = nil)
     page.fail
     msg = "error running #{step}"

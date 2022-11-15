@@ -6,11 +6,16 @@
 class GeneratePageImageJob < ApplicationJob
   queue_as :default
   discard_on ActiveRecord::RecordNotFound
-  attr_reader :page_id
+  attr_reader :page, :document, :pdftoppm_cmd
 
+  # Generates a PNG of a Page and attaches it to Page.image
+  # @param page_id [Integer, String] the ID for the page to process
+  # @param pdftoppm_cmd [String] the command to use as pdftoppm
   def perform(page_id, pdftoppm_cmd = nil)
-    @page_id = page_id
     @pdftoppm_cmd = pdftoppm_cmd
+    @page = Page.find(page_id)
+    @document = page.document
+
     convert_page_to_image
     attach_image_to_page
     page.image_generated
@@ -20,22 +25,18 @@ class GeneratePageImageJob < ApplicationJob
 
   private
 
-  def page
-    Page.find(page_id)
-  end
-
-  def document
-    page.document
-  end
-
+  # @return String the path to document.file
   def document_file_path
     ActiveStorage::Blob.service.path_for(document.file.key)
   end
 
+  # @return [String] the pdftoppm command
   def pdftoppm_path
-    @pdftoppm_cmd || ActiveStorage.paths[:pdftoppm] || 'pdftoppm'
+    pdftoppm_cmd || ActiveStorage.paths[:pdftoppm] || 'pdftoppm'
   end
 
+  # @return [String] the ppm_root for pdftoppm
+  # @see man pdftoppm(1)
   def ppm_root
     directory = File.dirname(document_file_path)
     basename = File.basename(document_file_path, '.*')
@@ -44,6 +45,7 @@ class GeneratePageImageJob < ApplicationJob
 
   # Runs the pdftoppm command and either returns true if it exited with 0 or
   # raises an error with context otherwise.
+  # @return [Boolean] whether the command succeeded
   def run_pdftoppm
     stdout, stderr, status = Open3.capture3(pdftoppm_path, '-f',
                                             page.page_num.to_s, '-l',
@@ -57,6 +59,7 @@ class GeneratePageImageJob < ApplicationJob
     status.success?
   end
 
+  # @return [String] the generated PNG file's path
   def png_file_path
     # pdftoppm pads page numbers with zeroes if more than 9 pages in the
     # document. See
@@ -66,6 +69,9 @@ class GeneratePageImageJob < ApplicationJob
     @png_file_path
   end
 
+  # @param step [String] which step the error occurred on
+  # @param context [Array, Hash, String] more context regarding the error (optional)
+  # @raise [StandardError] the error with context
   def handle_job_failure(step, context = nil)
     page.fail
     msg = "error running #{step}, document: #{document.inspect}, page: #{page.inspect}"
@@ -75,12 +81,14 @@ class GeneratePageImageJob < ApplicationJob
   end
 
   # Generates a PNG image for the current PDF page
+  # @return [String] path to generated PNG file
   def convert_page_to_image
     run_pdftoppm
 
     png_file_path
   end
 
+  # Attaches the image (@png_file_path) to Page.image
   def attach_image_to_page
     unless page.image.attach(io: File.open(png_file_path),
                              filename: File.basename(png_file_path),
@@ -89,8 +97,9 @@ class GeneratePageImageJob < ApplicationJob
     end
   end
 
+  # Deletes the generated PNG file
   def delete_image_file
-    File.delete(@png_file_path) if defined?(@png_file_path)
+    File.delete(png_file_path) if defined?(@png_file_path)
     @png_file_path = nil
   end
 end
