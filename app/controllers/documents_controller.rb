@@ -4,7 +4,7 @@ class DocumentsController < ApplicationController
   before_action :reject_unsupported_mimetypes, only: :create
 
   def index
-    # FIXME: paginate this
+    # TODO: paginate this
     @documents = Document.all
   end
 
