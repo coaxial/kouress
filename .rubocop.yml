@@ -65,3 +65,7 @@ Style/FrozenStringLiteralComment:
 RSpec/Focus:
   AutoCorrect: false
   Severity: error
+
+Rails/Output:
+  AutoCorrect: false
+  Severity: error
