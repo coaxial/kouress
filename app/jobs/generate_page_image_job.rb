@@ -3,7 +3,6 @@
 # This job generates a PNG image for each page in the PDF document. These
 # images will later be used for OCR (if required) and for previewing the
 # document's pages.
-require 'English'
 class GeneratePageImageJob < ApplicationJob
   queue_as :default
   discard_on ActiveRecord::RecordNotFound
