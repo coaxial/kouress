@@ -6,6 +6,7 @@ class UsersController < ApplicationController
   before_action :admin_user, only: %i[index destroy new create]
 
   def index
+    # TODO: paginate this
     @users = User.all
   end
 
