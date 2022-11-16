@@ -21,6 +21,9 @@ The version is specified in `.nvmrc`, currently 16.17.1
 - Enable `corepack` with `corepack enable`
 - Install JS dependencies: `yarn install`
 - Install libvips: `apt install libvips`
+- Install tesseract: `apt install tesseract-ocr` (and whatever languages you need; `tesseract-ocr-deu` for instance)
+- Install poppler: `apt install libpoppler-dev poppler-utils`
+- Install postgres lib: `apt install libpq-dev`
 
 ### Run the development server and redis
 
@@ -41,3 +44,9 @@ end
 ```
 
 Sidekiq's console is at `/sidekiq` (disabled outside of the development env)
+
+## Deployment
+
+### Postgres
+
+The Postgres password is set with env var `PG_PASSWORD`. It defaults to the development password.

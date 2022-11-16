@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'ShowDocuments', type: :feature do
-  let(:user) { create :user }
+RSpec.describe 'ShowDocuments' do
+  let(:user) { create(:user) }
 
   before do
     login user

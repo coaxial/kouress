@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'SingleDocumentUploads', type: :feature do
+RSpec.describe 'SingleDocumentUploads' do
   let(:user) { create(:user) }
 
   before do
@@ -17,8 +17,9 @@ RSpec.describe 'SingleDocumentUploads', type: :feature do
     end
 
     it 'can upload a document' do
+      document = Document.last
       visit documents_path
-      expect(page).to have_selector('.document-1')
+      expect(page).to have_selector("#document-#{document.id}")
     end
 
     it 'shows a success message' do

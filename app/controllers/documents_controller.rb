@@ -3,6 +3,11 @@
 class DocumentsController < ApplicationController
   before_action :reject_unsupported_mimetypes, only: :create
 
+  def index
+    # TODO: paginate this
+    @documents = Document.all
+  end
+
   def new
     @document = Document.new
   end
@@ -17,9 +22,8 @@ class DocumentsController < ApplicationController
     end
   end
 
-  def index
-    # FIXME: paginate this
-    @documents = Document.all
+  def show
+    @document = Document.find(params[:id])
   end
 
   def destroy

@@ -1,0 +1,8 @@
+= link_to t('documents.show.back'), :back
+%h1= @document.original_filename
+= render partial: 'shared/document/metadata', locals: { document: @document }
+= render partial: 'shared/document/delete', locals: { document: @document }
+= render partial: 'shared/document/download', locals: { document: @document }
+- @document.pages.each do |page|
+  - if page.image.representable?
+    = image_tag page.image.representation(resize_to_limit: [500, 500])

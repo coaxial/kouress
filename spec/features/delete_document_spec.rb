@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'DeleteDocuments', type: :feature do
+RSpec.describe 'DeleteDocuments' do
   let(:user) { create(:user) }
   let!(:document) { create(:document) }
 

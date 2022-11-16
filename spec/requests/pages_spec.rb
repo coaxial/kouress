@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Pages', type: :request do
+RSpec.describe 'Pages' do
   describe 'GET /index' do
     context 'when not logged in' do
       before { get pages_path }

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'ManageUsers', type: :feature do
+RSpec.describe 'ManageUsers' do
   subject { page }
 
   let!(:users) { create_list(:user, 5) }

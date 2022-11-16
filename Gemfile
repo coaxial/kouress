@@ -35,6 +35,8 @@ gem 'jbuilder'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
 
+gem 'pg'
+
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
@@ -88,3 +90,5 @@ end
 gem 'sidekiq', '~> 7.0'
 
 gem 'haml', '~> 6.0'
+
+gem 'rtesseract', '~> 3.1'

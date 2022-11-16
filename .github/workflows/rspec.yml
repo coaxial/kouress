@@ -9,8 +9,27 @@ on:
 jobs:
   rspec:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
+        options:
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options:
+          --health-cmd "redis-cli --raw incr ping" --health-interval 10s --health-timeout 5s --health-retries 5
     env:
       FORBID_FOCUSED_SPECS: 1
+      RAILS_ENV: test
+      POSTGRES_USER: gha
+      POSTGRES_PASSWORD: gha
 
     steps:
       - uses: actions/checkout@v3
@@ -26,8 +45,20 @@ jobs:
           ruby-version: 3.1
           bundler-cache: true
 
+      - name: Install dependencies
+        run: sudo apt install libpq-dev libvips tesseract-ocr tesseract-ocr-eng libpoppler-dev poppler-utils
+
+      - name: Setup database
+        run: |
+          cp config/database.gha.yml config/database.yml
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+
       - name: Run migrations
-        run: bin/rails db:migrate RAILS_ENV=test
+        run: bin/rails db:migrate
+
+      - name: Precompile assets
+        run: bin/rails assets:precompile
 
       - name: Run RSpec
         run: bundle exec rspec

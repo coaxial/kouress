@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Logout', type: :feature do
+RSpec.describe 'Logout' do
   context 'when the user is logged in' do
     before do
       user = create(:user)

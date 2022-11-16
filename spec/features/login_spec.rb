@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Login', type: :feature do
+RSpec.describe 'Login' do
   before { @user = create(:user) }
 
   context 'with valid credentials' do
