@@ -45,8 +45,8 @@ jobs:
           ruby-version: 3.1
           bundler-cache: true
 
-      - name: Install libraries
-        run: sudo apt install libpq-dev
+      - name: Install dependencies
+        run: sudo apt install libpq-dev libvips tesseract-ocr tesseract-orc-eng libpoppler-dev
 
       - name: Setup database
         run: |

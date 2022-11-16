@@ -28,6 +28,11 @@ jobs:
           - 6379:6379
         options:
           --health-cmd "redis-cli --raw incr ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      FORBID_FOCUSED_SPECS: 1
+      RAILS_ENV: test
+      POSTGRES_USER: gha
+      POSTGRES_PASSWORD: gha
 
     steps:
       - uses: actions/checkout@v3
@@ -38,8 +43,8 @@ jobs:
           ruby-version: 3.1
           bundler-cache: true
 
-      - name: Install libraries
-        run: sudo apt install libpq-dev
+      - name: Install dependencies
+        run: sudo apt install libpq-dev libvips tesseract-ocr tesseract-orc-eng libpoppler-dev
 
       - name: Setup database
         run: |
