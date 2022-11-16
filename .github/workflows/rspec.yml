@@ -9,6 +9,16 @@ on:
 jobs:
   rspec:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
+        options:
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     env:
       FORBID_FOCUSED_SPECS: 1
 
@@ -26,8 +36,29 @@ jobs:
           ruby-version: 3.1
           bundler-cache: true
 
+      - name: Install libraries
+        run: sudo apt install libpq-dev
+
+      - name: Setup database
+        run: |
+          cp config/database.gha.yml config/database.yml
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
+
       - name: Run migrations
-        run: bin/rails db:migrate RAILS_ENV=test
+        run: bin/rails db:migrate
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
 
       - name: Run RSpec
         run: bundle exec rspec
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
