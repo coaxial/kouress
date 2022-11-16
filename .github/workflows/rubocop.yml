@@ -44,7 +44,7 @@ jobs:
           bundler-cache: true
 
       - name: Install dependencies
-        run: sudo apt install libpq-dev libvips tesseract-ocr tesseract-orc-eng libpoppler-dev
+        run: sudo apt install libpq-dev libvips tesseract-ocr tesseract-ocr-eng libpoppler-dev
 
       - name: Setup database
         run: |
