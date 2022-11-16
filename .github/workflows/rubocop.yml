@@ -12,6 +12,20 @@ permissions:
 jobs:
   rubocop:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
+        options:
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
 
     steps:
       - uses: actions/checkout@v3
@@ -22,8 +36,25 @@ jobs:
           ruby-version: 3.1
           bundler-cache: true
 
+      - name: Install libraries
+        run: sudo apt install libpq-dev
+
+      - name: Setup database
+        run: |
+          cp config/database.gha.yml config/database.yml
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
+
       - name: Run migrations
-        run: bin/rails db:migrate RAILS_ENV=test
+        run: bin/rails db:migrate
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
 
       - name: Run RuboCop
         run: bundle exec rubocop --config .rubocop.yml --parallel
