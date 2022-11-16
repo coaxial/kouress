@@ -8,7 +8,7 @@ class GeneratePageImageJob < ApplicationJob
   discard_on ActiveRecord::RecordNotFound
   attr_reader :page, :document, :pdftoppm_cmd
 
-  # Generates a PNG of a Page and attaches it to Page.image
+  # Generates a PNG of a Page and attaches it to Page#image
   # @param page_id [Integer, String] the ID for the page to process
   # @param pdftoppm_cmd [String] the command to use as pdftoppm
   def perform(page_id, pdftoppm_cmd = nil)
@@ -27,7 +27,7 @@ class GeneratePageImageJob < ApplicationJob
 
   private
 
-  # @return String the path to document.file
+  # @return [String] the path to document.file
   def document_file_path
     ActiveStorage::Blob.service.path_for(document.file.key)
   end
@@ -49,10 +49,12 @@ class GeneratePageImageJob < ApplicationJob
   # raises an error with context otherwise.
   # @return [Boolean] whether the command succeeded
   def run_pdftoppm
-    stdout, stderr, status = Open3.capture3(pdftoppm_path, '-f',
-                                            page.page_num.to_s, '-l',
-                                            page.page_num.to_s, '-cropbox',
-                                            '-png', document_file_path,
+    stdout, stderr, status = Open3.capture3(pdftoppm_path,
+                                            '-f', page.page_num.to_s,
+                                            '-l', page.page_num.to_s,
+                                            '-cropbox',
+                                            '-png',
+                                            document_file_path,
                                             ppm_root)
 
     # TODO: proper error handling
