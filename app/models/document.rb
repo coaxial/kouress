@@ -9,9 +9,19 @@ class Document < ApplicationRecord
   after_commit :analyze_document, on: :create
 
   # State machine
-  # Valid transitions:
-  # unprocessed => paginated => processed
-  #             => failed    => paginated => processed
+  # mermaid-js diagram:
+  # https://kroki.io/mermaid/svg/eNorLkksSXXJTEwvSszVLTPiUlCI1opV0NW1UyjNKyjKT04tLk5NAYrC2WA5oBouoCCSErBwQWJ6Zh7QvBQscmmJmTlgCQgDQz2cjaoaVRjhIgBB4zrm
+  #
+  # stateDiagram-v2
+  #   [*] --> unprocessed
+  #   processed --> [*]
+
+  #   unprocessed --> paginated
+  #   unprocessed --> failed
+  #   failed --> paginated
+  #   paginated --> failed
+  #   paginated --> processed
+
   STATES = %w[unprocessed paginated processed failed].freeze
   delegate :unprocessed?, :paginated?, :processed?, :failed?, to: :current_state
 

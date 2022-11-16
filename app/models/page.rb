@@ -10,19 +10,32 @@ class Page < ApplicationRecord
   after_commit :update_document_state, on: :update
 
   # State machine
-  # Valid transitions:
-  # unprocessed => image_generated => text_extracted  => processed
-  #             => failed          => image_generated => processed
-  #                                => failed          => image_generated => processed
+  # mermaid-js diagram:
+  # https://kroki.io/mermaid/svg/eNorLkksSXXJTEwvSszVLTPiUlCI1opV0NW1UyjNKyjKT04tLk5NAYrC2WA5oBouoCCSErBwZm5iemp8empeahHQ1BQsKtISM3PAEmhKUSUhDBxGYtNZklpREg_ERYnJEEWoAjhNJ0YfIhQADRhkRg
+  #
+  # stateDiagram-v2
+  # [*] --> unprocessed
+  # processed --> [*]
+
+  # unprocessed --> image_generated
+  # unprocessed --> failed
+  # image_generated --> failed
+  # failed --> image_generated
+  # image_generated --> text_extracted
+  # text_extracted --> failed
+  # failed --> text_extracted
+  # text_extracted --> processed
+  #
   STATES = %w[unprocessed image_generated text_extracted processed failed].freeze
-  delegate :unprocessed?, :image_generated?, :text_extracted?, :processed?, :failed?, to: :current_state
+  delegate :unprocessed?, :image_generated?, :text_extracted?, :processed?,
+           :failed?, to: :current_state
 
   def current_state
     (events.last.try(:state) || STATES.first).inquiry
   end
 
   def process
-    events.create! state: 'processed' if paginated?
+    events.create! state: 'processed' if text_extracted?
   end
 
   def image_generated
@@ -34,7 +47,7 @@ class Page < ApplicationRecord
   end
 
   def fail
-    events.create! state: 'failed' if unprocessed? || image_generated?
+    events.create! state: 'failed' if unprocessed? || image_generated? || text_extracted?
   end
 
   def self.unprocessed
