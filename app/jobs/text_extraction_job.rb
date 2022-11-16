@@ -19,7 +19,7 @@ class TextExtractionJob < ApplicationJob
 
     # In case this job is run before the GeneratePageImageJob, then do
     # nothing and retry later once the page image has been generated.
-    handle_missing_attachment unless page.image.attached?
+    handle_missing_attachment unless page.image_generated?
 
     add_text_to_page
   end
@@ -69,7 +69,7 @@ class TextExtractionJob < ApplicationJob
     # First try and see if there is any embedded text
     reader = PDF::Reader.new(document_file_path)
     embedded_text = reader.page(page.page_num).text
-    @text = embedded_text
+    @text = embedded_text if embedded_text.present?
     return embedded_text if embedded_text.present?
 
     # If there isn't, use tesseract

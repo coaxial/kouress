@@ -4,22 +4,18 @@
 # processing.
 class DocumentsAnalysisJob < ApplicationJob
   queue_as :default
-  attr_reader :document_path
+  attr_reader :document_path, :document
 
   discard_on ActiveRecord::RecordNotFound
 
   def perform(document_id)
-    @document_id = document_id
-    paginate_document if document.unprocessed? || document.failed?
+    @document = Document.find(document_id)
+    extract_pages if document.unprocessed? || document.failed?
   end
 
   private
 
-  def document
-    Document.find(@document_id)
-  end
-
-  def paginate_document
+  def extract_pages
     create_pages
     document.paginate
   end

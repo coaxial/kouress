@@ -79,7 +79,10 @@ RSpec.describe TextExtractionJob do
 
     it "includes the command's context in the error" do
       expect do
-        described_class.perform_now(document.pages.first.id,
+        # Using the second page because the first has already been failed
+        # above, and it won't try to extract the text again if
+        # page.text_extracted?
+        described_class.perform_now(document.pages.second.id,
                                     tesseract_cmd)
       end.to raise_error.with_message(/.*tesseract.*Process::Status.*/)
     end

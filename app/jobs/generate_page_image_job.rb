@@ -16,9 +16,11 @@ class GeneratePageImageJob < ApplicationJob
     @page = Page.find(page_id)
     @document = page.document
 
-    convert_page_to_image
-    attach_image_to_page
-    page.image_generated
+    if page.unprocessed? || page.failed?
+      convert_page_to_image
+      attach_image_to_page
+      page.image_generated
+    end
   ensure
     delete_image_file
   end
