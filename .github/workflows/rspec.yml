@@ -65,6 +65,13 @@ jobs:
           POSTGRES_USER: gha
           POSTGRES_PASSWORD: gha
 
+      - name: Precompile assets
+        run: rails assets:precompile
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: gha
+          POSTGRES_PASSWORD: gha
+
       - name: Run RSpec
         run: bundle exec rspec
         env:
