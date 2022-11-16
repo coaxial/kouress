@@ -4,7 +4,7 @@
 # processing.
 class DocumentsAnalysisJob < ApplicationJob
   queue_as :default
-  attr_reader :document_path, :document
+  attr_reader :document
 
   discard_on ActiveRecord::RecordNotFound
 
