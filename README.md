@@ -22,7 +22,7 @@ The version is specified in `.nvmrc`, currently 16.17.1
 - Install JS dependencies: `yarn install`
 - Install libvips: `apt install libvips`
 - Install tesseract: `apt install tesseract-ocr` (and whatever languages you need; `tesseract-ocr-deu` for instance)
-- Install poppler: `apt install libpoppler-dev`
+- Install poppler: `apt install libpoppler-dev poppler-utils`
 - Install postgres lib: `apt install libpq-dev`
 
 ### Run the development server and redis
