@@ -12,8 +12,7 @@ class UpdateStateForPageJob < ApplicationJob
     @document = page.document
     raise ApplicationError::PageNotReady.new(context: { page: }) unless page.text_extracted?
 
-    document.increment(:processed_pages_count)
     page.process
-    document.process if document.processed_pages_count == document.pages.count
+    document.update(processed_pages_count: document.processed_pages_count + 1)
   end
 end
