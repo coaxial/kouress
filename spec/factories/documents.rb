@@ -22,6 +22,11 @@ FactoryBot.define do
       transient { document_file { file_fixture('p761-thompson-notext.pdf') } }
     end
 
+    trait :single_page do
+      transient { document_file { file_fixture('8000ad.pdf') } }
+    end
+
     factory :document_without_embedded_text, traits: [:no_embedded_text]
+    factory :single_page_document, traits: [:single_page]
   end
 end
