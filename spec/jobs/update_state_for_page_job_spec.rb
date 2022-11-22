@@ -28,7 +28,7 @@ RSpec.describe UpdateStateForPageJob, type: :job do
       described_class.perform_now(document.pages.first.id)
     end
 
-    it "changes document's state to processed", :focus do
+    it "changes document's state to processed" do
       expect(document).to be_processed
     end
   end

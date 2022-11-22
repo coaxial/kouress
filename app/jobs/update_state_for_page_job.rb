@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Updates the Page's state to processed.
 class UpdateStateForPageJob < ApplicationJob
   queue_as :default
   retry_on ApplicationError::PageNotReady, wait: :exponentially_longer
@@ -9,12 +10,10 @@ class UpdateStateForPageJob < ApplicationJob
   def perform(page_id)
     @page = Page.find(page_id)
     @document = page.document
-    if page.text_extracted?
-      document.increment!(:processed_pages_count)
-      page.process
-      document.process if document.processed_pages_count == document.pages.count
-    else
-      raise ApplicationError::PageNotReady.new(context: { page: })
-    end
+    raise ApplicationError::PageNotReady.new(context: { page: }) unless page.text_extracted?
+
+    document.increment(:processed_pages_count)
+    page.process
+    document.process if document.processed_pages_count == document.pages.count
   end
 end
