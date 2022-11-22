@@ -12,7 +12,6 @@ class TextExtractionJob < ApplicationJob
   # @param page_id [Integer, String] the ID for the page to process
   # @param tesseract_cmd [String] the command to use as tesseract
   def perform(page_id, tesseract_cmd = nil)
-    # TODO: Proper error handling
     @page = Page.find(page_id)
     @document = page.document
     @tesseract_cmd = tesseract_cmd
@@ -51,9 +50,11 @@ class TextExtractionJob < ApplicationJob
   # @return [String] stdout from running tesseract on the page's image
   def run_tesseract
     # TODO: Use all installed languages or the doc's language
-    stdout, stderr, status = Open3.capture3(tesseract_path, page_image_path, 'stdout')
+    command = [tesseract_path, page_image_path, 'stdout'].join(' ')
 
-    handle_job_failure('tesseract', [stdout, stderr, status]) unless status.success?
+    stdout, stderr, status = Open3.capture3(command)
+
+    handle_command_failure(command:, stdout:, stderr:, status:) unless status.success?
 
     stdout
   end
@@ -81,20 +82,36 @@ class TextExtractionJob < ApplicationJob
     tesseract_cmd || ActiveStorage.paths[:tesseract] || 'tesseract'
   end
 
-  # @raise [StandardError] what went wrong
-  def handle_job_failure(step, context = nil)
-    page.fail
-    msg = "error running #{step}"
-    msg << ": #{context.inspect}" if context
+  # @return [Hash] the base context to be used for ApplicationError instances
+  def base_context
+    {
+      page:
+    }
+  end
 
-    raise msg
+  # @param additional_context [Hash] extra context regarding the error, beyond #base_context (optional)
+  # @raise [ApplicationError::SystemCommandFailure]
+  def handle_command_failure(additional_context = {})
+    context = base_context.merge(additional_context)
+
+    page.fail
+    raise ApplicationError::SystemCommandFailure.new(context:)
+  end
+
+  # @param additional_context [Hash] extra context regarding the error, beyond #base_context (optional)
+  # @raise [ApplicationError::AttachFailure]
+  def handle_update_failure(additional_context = {})
+    context = base_context.merge(additional_context)
+
+    page.fail
+    raise ApplicationError::UpdateFailure.new(context:)
   end
 
   def add_text_to_page
     if page.update(text: extracted_text)
       page.text_extracted
     else
-      handle_job_failure('update page.text')
+      handle_update_failure(text:)
     end
   end
 end

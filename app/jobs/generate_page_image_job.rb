@@ -63,7 +63,7 @@ class GeneratePageImageJob < ApplicationJob
 
     stdout, stderr, status = Open3.capture3(command)
 
-    handle_command_failure(page:, command:, stdout:, stderr:, status:) unless status.success?
+    handle_command_failure(command:, stdout:, stderr:, status:) unless status.success?
 
     status.success?
   end
