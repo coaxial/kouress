@@ -1,0 +1,4 @@
+en:
+  error:
+    page_not_ready:
+      message: "The page hasn't been processed yet."

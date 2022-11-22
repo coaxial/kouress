@@ -2,6 +2,7 @@
   <h1><%= document.original_filename %></h1>
   <div>
     <%= render partial: 'shared/document/metadata', locals: { document: } %>
+    <%= render partial: 'shared/document/status', locals: { document: } %>
     <%= render partial: 'shared/document/delete', locals: { document: } %>
     <%= render partial: 'shared/document/download', locals: { document: } %>
     <%= render partial: 'shared/document/representation', locals: { document: } %>

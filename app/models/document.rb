@@ -7,6 +7,7 @@ class Document < ApplicationRecord
   has_one_attached :file
   validates_with UniqueFileValidator, on: :create
   after_commit :analyze_document, on: :create
+  after_commit :update_state, on: :update
 
   # State machine
   # mermaid-js diagram:
@@ -54,5 +55,9 @@ class Document < ApplicationRecord
 
   def analyze_document
     DocumentsAnalysisJob.perform_later(id)
+  end
+
+  def update_state
+    process if processed_pages_count == pages.count
   end
 end

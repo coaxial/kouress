@@ -1,6 +1,7 @@
 = link_to t('documents.show.back'), :back
 %h1= @document.original_filename
 = render partial: 'shared/document/metadata', locals: { document: @document }
+= render partial: 'shared/document/status', locals: { document: @document }
 = render partial: 'shared/document/delete', locals: { document: @document }
 = render partial: 'shared/document/download', locals: { document: @document }
 - @document.pages.each do |page|

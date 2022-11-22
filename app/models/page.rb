@@ -7,7 +7,7 @@ class Page < ApplicationRecord
   default_scope { order(:page_num) }
   after_commit :generate_page_image, on: :create
   after_commit :extract_text, on: :create
-  after_commit :update_document_state, on: :update
+  after_commit :update_state, on: :update
 
   # State machine
   # mermaid-js diagram:
@@ -65,5 +65,7 @@ class Page < ApplicationRecord
     TextExtractionJob.perform_later(id)
   end
 
-  def update_document_state; end
+  def update_state
+    UpdateStateForPageJob.perform_later(id)
+  end
 end

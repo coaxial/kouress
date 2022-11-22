@@ -9,12 +9,14 @@ default: &default
   encoding: unicode
   host: localhost
   username: <%= ENV["POSTGRES_USER"] %>
-  password: <%= ENV.["PG_PASSWORD"] %>
+  password: <%= ENV["PG_PASSWORD"] %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
   database: kouress_development
+  username: postgres
+  password: kouressdev
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
