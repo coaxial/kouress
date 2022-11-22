@@ -4,11 +4,10 @@ module ApplicationError
   # The parent error for all ApplicationError instances.
   # Error message is defined in config/locales/errors.xx.yml
   class BaseError < StandardError
-    attr_accessor :config, :context
+    attr_accessor :context
 
-    def initialize(config = {})
-      @config = config
-      @context = config[:context]
+    def initialize(args = {})
+      @context = args[:context]
       super
     end
 

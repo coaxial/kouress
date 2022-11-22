@@ -2,3 +2,6 @@ en:
   error:
     page_not_ready:
       message: "The page hasn't been processed yet."
+
+    system_command_failure:
+      message: "System command failed to execute successfully."

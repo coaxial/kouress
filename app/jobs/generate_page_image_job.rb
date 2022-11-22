@@ -45,20 +45,25 @@ class GeneratePageImageJob < ApplicationJob
     File.join(directory, basename)
   end
 
+  # @return [Hash] the base context for this job to include in
+  # ApplicationError instances
+  def base_context
+    {
+      page:
+    }
+  end
+
   # Runs the pdftoppm command and either returns true if it exited with 0 or
   # raises an error with context otherwise.
   # @return [Boolean] whether the command succeeded
   def run_pdftoppm
-    stdout, stderr, status = Open3.capture3(pdftoppm_path,
-                                            '-f', page.page_num.to_s,
-                                            '-l', page.page_num.to_s,
-                                            '-cropbox',
-                                            '-png',
-                                            document_file_path,
-                                            ppm_root)
+    command = [pdftoppm_path, '-f', page.page_num.to_s, '-l',
+               page.page_num.to_s, '-cropbox', '-png', document_file_path,
+               ppm_root].join(' ')
 
-    # TODO: proper error handling
-    handle_job_failure('pdftoppm', [stdout, stderr, status]) unless status.success?
+    stdout, stderr, status = Open3.capture3(command)
+
+    handle_command_failure(page:, command:, stdout:, stderr:, status:) unless status.success?
 
     status.success?
   end
@@ -73,15 +78,22 @@ class GeneratePageImageJob < ApplicationJob
     @png_file_path
   end
 
-  # @param step [String] which step the error occurred on
-  # @param context [Array, Hash, String] more context regarding the error (optional)
-  # @raise [StandardError] the error with context
-  def handle_job_failure(step, context = nil)
-    page.fail
-    msg = "error running #{step}, document: #{document.inspect}, page: #{page.inspect}"
-    msg << ", context: #{context.inspect}" if context
+  # @param additional_context [Hash] extra context regarding the error, beyond #base_context (optional)
+  # @raise [ApplicationError::SystemCommandFailure]
+  def handle_command_failure(additional_context = {})
+    context = base_context.merge(additional_context)
 
-    raise msg
+    page.fail
+    raise ApplicationError::SystemCommandFailure.new(context:)
+  end
+
+  # @param additional_context [Hash] extra context regarding the error, beyond #base_context (optional)
+  # @raise [ApplicationError::AttachFailure]
+  def handle_attach_failure(additional_context = {})
+    context = base_context.merge(additional_context)
+
+    page.fail
+    raise ApplicationError::AttachFailure.new(context:)
   end
 
   # Generates a PNG image for the current PDF page
@@ -94,11 +106,11 @@ class GeneratePageImageJob < ApplicationJob
 
   # Attaches the image (@png_file_path) to Page.image
   def attach_image_to_page
-    unless page.image.attach(io: File.open(png_file_path),
-                             filename: File.basename(png_file_path),
-                             content_type: 'image/png')
-      handle_job_failure('attach image', page)
-    end
+    params = { io: File.open(png_file_path),
+               filename: File.basename(png_file_path),
+               content_type: 'image/png' }
+
+    handle_attach_failure(page:) unless page.image.attach(params)
   end
 
   # Deletes the generated PNG file
