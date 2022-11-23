@@ -84,7 +84,7 @@ RSpec.describe TextExtractionJob do
         # page.text_extracted?
         described_class.perform_now(document.pages.second.id,
                                     tesseract_cmd)
-      end.to raise_error.with_message(/.*tesseract.*Process::Status.*/)
+      end.to raise_error(ApplicationError::SystemCommandFailure)
     end
   end
 end

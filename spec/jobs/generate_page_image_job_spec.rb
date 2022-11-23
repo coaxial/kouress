@@ -37,11 +37,11 @@ RSpec.describe GeneratePageImageJob, type: :job do
         expect(document.pages.first).to be_failed
       end
 
-      it "includes the command's context in the error" do
+      it 'raises ApplicationError::SystemCommandFailure' do
         expect do
           described_class.perform_now(document.pages.first.id,
                                       pdftoppm_cmd)
-        end.to raise_error.with_message(/.*pdftoppm.*Process::Status.*/)
+        end.to raise_error(ApplicationError::SystemCommandFailure)
       end
     end
   end
