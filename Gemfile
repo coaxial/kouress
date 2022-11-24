@@ -67,6 +67,8 @@ group :development, :test do
   gem 'rails-controller-testing'
   gem 'rspec-rails', '~> 6.0.0'
   gem 'rubocop-rspec'
+  gem 'simplecov', require: false
+  gem 'simplecov-lcov', require: false
 end
 
 group :development do
@@ -74,6 +76,7 @@ group :development do
   gem 'web-console'
 
   gem 'guard'
+  gem 'guard-bundler', require: false
   gem 'guard-rspec', require: false
   gem 'guard-rubocop', require: false
   gem 'hotwire-livereload'
