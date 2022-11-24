@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+SimpleCov.start
 require 'capybara/rspec'
 require './spec/support/feature_helper'
 require './spec/support/request_helper'
