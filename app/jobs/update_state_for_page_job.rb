@@ -4,16 +4,20 @@
 class UpdateStateForPageJob < ApplicationJob
   queue_as :default
   retry_on ApplicationError::PageNotReady, wait: :exponentially_longer
-  discard_on ActiveRecord::RecordNotFound
+  discard_on ActiveRecord::RecordNotFound, ApplicationError::PageAlreadyProcessed
   attr_accessor :page, :document
 
   def perform(page_id)
     @page = Page.find(page_id)
     @document = page.document
+
+    # Discard job if page already processed
+    raise ApplicationError::PageAlreadyProcessed.new(context: { page: }) if page.processed?
+
+    # Retry later if previous steps not done yet
     raise ApplicationError::PageNotReady.new(context: { page: }) unless page.text_extracted?
 
     page.process
-
     update_document_state
   end
 

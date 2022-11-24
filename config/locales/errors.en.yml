@@ -8,3 +8,5 @@ en:
       message: "Failed to attach object to model."
     update_failure:
       message: "Failed to update model."
+    page_already_processed:
+      message: "Page has already been processed and doesn't need further work"

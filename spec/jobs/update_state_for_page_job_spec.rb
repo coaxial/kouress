@@ -32,4 +32,18 @@ RSpec.describe UpdateStateForPageJob, type: :job do
       expect(document).to be_processed
     end
   end
+
+  context 'when attempting to process a page in the wrong state' do
+    let(:document) { create(:single_page_document) }
+
+    before { described_class.perform_now(document.pages.first.id) }
+
+    it "doesn't process the page" do
+      expect(document.pages.first).not_to be_processed
+    end
+
+    it "doesn't process the document" do
+      expect(document).not_to be_processed
+    end
+  end
 end

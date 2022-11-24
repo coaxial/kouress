@@ -14,6 +14,13 @@ FactoryBot.define do
       end
     end
 
+    trait :image_generated do
+      after :create do |record, _evaluator|
+        record.image_generated
+      end
+    end
+
     factory :page_with_text_extracted, traits: [:text_extracted]
+    factory :page_with_image_generated_state, traits: [:image_generated]
   end
 end
