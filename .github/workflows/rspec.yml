@@ -62,3 +62,9 @@ jobs:
 
       - name: Run RSpec
         run: bundle exec rspec
+
+      - name: Add code coverage comment
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          lcov-file: ./coverage/lcov/ruby-simplecov.lcov
+          github-token: ${{ secrets.GITHUB_TOKEN }}
