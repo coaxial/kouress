@@ -2,7 +2,7 @@
 
 class SiteController < ApplicationController
   def home
-    @document_upload = Document.new
+    @document = Document.new
     @documents = Document.all
   end
 end
