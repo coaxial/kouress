@@ -34,6 +34,8 @@ en:
     require_login:
       log_in: "Please log in in first"
   shared:
+    search:
+      title: "Search"
     users:
       form:
         update: "Update"

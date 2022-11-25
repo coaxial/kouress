@@ -5,7 +5,12 @@ class DocumentsController < ApplicationController
 
   def index
     # TODO: paginate this
-    @documents = Document.all
+    if params[:query]
+      @documents = []
+      PgSearch.multisearch(params[:query])
+    else
+      @documents = Document.all
+    end
   end
 
   def new
