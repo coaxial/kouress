@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_25_091345) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_25_101005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,6 +75,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_25_091345) do
     t.datetime "updated_at", null: false
     t.text "text"
     t.index ["document_id"], name: "index_pages_on_document_id"
+    t.index ["text"], name: "index_pages_on_text"
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
