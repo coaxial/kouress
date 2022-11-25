@@ -3,6 +3,7 @@
 class Page < ApplicationRecord
   include PgSearch::Model
   multisearchable against: [:text],
+                  additional_attributes: ->(page) { { document_id: page.document_id } },
                   if: :processed?,
                   update_if: :text_changed?
   belongs_to :document

@@ -5,9 +5,10 @@ class DocumentsController < ApplicationController
 
   def index
     # TODO: paginate this
+    @documents = []
     if params[:query]
-      @documents = []
-      PgSearch.multisearch(params[:query])
+      PgSearch.multisearch(params[:query]).each { |result| @documents << Document.find(result.document_id) }
+      @documents.uniq
     else
       @documents = Document.all
     end

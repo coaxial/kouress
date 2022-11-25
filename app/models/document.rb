@@ -3,7 +3,7 @@
 class Document < ApplicationRecord
   include ActiveModel::Validations
   include PgSearch::Model
-  multisearchable against: { id: 'A', original_filename: 'B' },
+  multisearchable against: %i[id original_filename],
                   if: :processed?
   has_many :pages, dependent: :delete_all
   has_many :events, dependent: :delete_all, class_name: 'DocumentProcessingEvent'
