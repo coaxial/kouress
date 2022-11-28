@@ -7,13 +7,32 @@ RSpec.describe 'Searches', type: :system do
     driven_by(:rack_test)
   end
 
-  it 'drops accents from search' do
-    visit '/'
+  let(:user) { create :user }
+  let!(:document) { create :multisearchable_document }
 
-    fill_in 'Search', with: 'Hèlló'
+  context 'when searching for one word' do
+    before do
+      login user
 
-    click_button 'Search'
+      visit home_path
 
-    expect(page).to have_text('hello')
+      fill_in 'query', with: 'trusting'
+      click_on 'Search'
+    end
+
+    it 'shows the matching documents' do
+      expect(page).to have_text('p761-thompson')
+    end
   end
+
+  pending 'drops accents from search'
+  # it 'drops accents from search' do
+  #   visit '/'
+
+  #   fill_in 'Search', with: 'Hèlló'
+
+  #   click_button 'Search'
+
+  #   expect(page).to have_text('hello')
+  # end
 end

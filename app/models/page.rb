@@ -2,6 +2,9 @@
 
 class Page < ApplicationRecord
   include PgSearch::Model
+  PgSearch.multisearch_options = {
+    ignoring: :accents
+  }
   multisearchable against: [:text],
                   additional_attributes: ->(page) { { document_id: page.document_id } },
                   if: :processed?,

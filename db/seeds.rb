@@ -8,7 +8,15 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
+Rails.logger.info 'Creating default users...'
 User.destroy_all
 
 User.create!(username: 'admin', password: 'admin', email: 'admin@example.org', admin: true)
 User.create!(username: 'user', password: 'user', email: 'user@example.org', admin: false)
+Rails.logger.info 'Done.'
+
+Rails.logger.info 'Adding ISO 639 languages...'
+ISO_639::ISO_639_2.each do |lang|
+  Language.create(iso_code: lang.alpha3)
+end
+Rails.logger.info 'Done.'
