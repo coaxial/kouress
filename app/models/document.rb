@@ -7,6 +7,7 @@ class Document < ApplicationRecord
                   if: :processed?
   has_many :pages, dependent: :delete_all
   has_many :events, dependent: :delete_all, class_name: 'DocumentProcessingEvent'
+  belongs_to :language
   has_one_attached :file
   validates_with UniqueFileValidator, on: :create
   after_commit :analyze_document, on: :create
