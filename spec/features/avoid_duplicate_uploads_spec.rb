@@ -32,7 +32,7 @@ RSpec.describe 'AvoidDuplicateUploads' do
       it 'rejects the upload' do
         visit documents_path
 
-        expect(page).not_to have_selector('.document-2')
+        expect(page).not_to have_selector(".document-#{Document.last.id}")
       end
 
       it 'shows a message' do

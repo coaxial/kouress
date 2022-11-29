@@ -4,7 +4,6 @@ class DocumentsController < ApplicationController
   before_action :reject_unsupported_mimetypes, only: :create
 
   def index
-    @languages = Language.all.sort_by(&:fulltext_name)
     # TODO: paginate this
     @documents = []
     if params[:query]
@@ -21,6 +20,7 @@ class DocumentsController < ApplicationController
   end
 
   def create
+    @languages = Language.all.sort_by(&:fulltext_name)
     @document = Document.new(create_params)
     if @document.save
       redirect_back_or_to documents_path, notice: t('.success')
@@ -50,6 +50,7 @@ class DocumentsController < ApplicationController
     unless Document.supported_mimetypes.include?(
       document_params[:file].content_type,
     )
+      @languages = Language.all.sort_by(&:fulltext_name)
       @document = Document.new(create_params)
       flash.now.alert = t('documents.create.unsupported_mimetype')
       render 'new', status: :unprocessable_entity
