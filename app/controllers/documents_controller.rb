@@ -4,6 +4,7 @@ class DocumentsController < ApplicationController
   before_action :reject_unsupported_mimetypes, only: :create
 
   def index
+    @languages = Language.all.sort_by(&:fulltext_name)
     # TODO: paginate this
     @documents = []
     if params[:query]
@@ -16,6 +17,7 @@ class DocumentsController < ApplicationController
 
   def new
     @document = Document.new
+    @languages = Language.all.sort_by(&:fulltext_name)
   end
 
   def create
