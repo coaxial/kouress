@@ -71,7 +71,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_28_140948) do
     t.enum "iso_code", default: "eng", null: false, comment: "ISO 639 alpha3 code", enum_type: "iso_639_alpha3_codes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["iso_code"], name: "index_languages_on_iso_code"
+    t.index ["iso_code"], name: "index_languages_on_iso_code", unique: true
   end
 
   create_table "page_processing_events", force: :cascade do |t|

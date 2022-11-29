@@ -3,12 +3,6 @@
 class Document < ApplicationRecord
   include ActiveModel::Validations
   include PgSearch::Model
-  PgSearch.multisearch_options = {
-    ignoring: :accents
-    # using: {
-    #   tsearch: { dictionary: language }
-    # }
-  }
   multisearchable against: %i[id original_filename],
                   if: :processed?
   has_many :pages, dependent: :delete_all

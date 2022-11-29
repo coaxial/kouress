@@ -11,6 +11,6 @@ module RequestHelper
   # @param user [ActiveRecord::User] the user to login with
   def login(user)
     post sessions_path, params: { username: user.username,
-                                  password: user.password }
+                                  password: user.password, }
   end
 end

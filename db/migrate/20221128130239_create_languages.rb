@@ -5,7 +5,7 @@ class CreateLanguages < ActiveRecord::Migration[7.0]
     create_enum :iso_639_alpha3_codes, alpha3_codes
 
     create_table :languages do |t|
-      t.enum :iso_code, enum_type: :iso_639_alpha3_codes, default: english, comment: 'ISO 639 alpha3 code', index: true, null: false
+      t.enum :iso_code, enum_type: :iso_639_alpha3_codes, default: english, comment: 'ISO 639-2 alpha3 code', index: { unique: true }, null: false
       t.timestamps
     end
   end

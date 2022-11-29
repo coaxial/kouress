@@ -8,15 +8,19 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-Rails.logger.info 'Creating default users...'
+Rails.logger.info 'Creating default users…'
 User.destroy_all
 
 User.create!(username: 'admin', password: 'admin', email: 'admin@example.org', admin: true)
 User.create!(username: 'user', password: 'user', email: 'user@example.org', admin: false)
 Rails.logger.info 'Done.'
 
-Rails.logger.info 'Adding ISO 639 languages...'
+Rails.logger.info 'Adding ISO 639 languages…'
+Language.destroy_all
 ISO_639::ISO_639_2.each do |lang|
-  Language.create(iso_code: lang.alpha3)
+  # qaa-qtz is an oddball that doesn't seem to have any practical use in the
+  # context of this application.
+  # It does however break the iso-639 gem: https://github.com/xwmx/iso-639/issues/15
+  Language.create(iso_code: lang.alpha3) unless lang.alpha3 == 'qaa-qtz'
 end
 Rails.logger.info 'Done.'

@@ -83,7 +83,7 @@ RSpec.describe TextExtractionJob do
         # above, and it won't try to extract the text again if
         # page.text_extracted?
         described_class.perform_now(document.pages.second.id,
-                                    tesseract_cmd)
+                                    tesseract_cmd,)
       end.to raise_error(ApplicationError::SystemCommandFailure)
     end
   end

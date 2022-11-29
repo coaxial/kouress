@@ -49,7 +49,7 @@ class GeneratePageImageJob < ApplicationJob
   # ApplicationError instances
   def base_context
     {
-      page:
+      page:,
     }
   end
 
@@ -59,7 +59,7 @@ class GeneratePageImageJob < ApplicationJob
   def run_pdftoppm
     command = [pdftoppm_path, '-f', page.page_num.to_s, '-l',
                page.page_num.to_s, '-cropbox', '-png', document_file_path,
-               ppm_root].join(' ')
+               ppm_root,].join(' ')
 
     stdout, stderr, status = Open3.capture3(command)
 
@@ -108,7 +108,7 @@ class GeneratePageImageJob < ApplicationJob
   def attach_image_to_page
     params = { io: File.open(png_file_path),
                filename: File.basename(png_file_path),
-               content_type: 'image/png' }
+               content_type: 'image/png', }
 
     handle_attach_failure(page:) unless page.image.attach(params)
   end

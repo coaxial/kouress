@@ -6,7 +6,7 @@ class DocumentProcessingEvent < ApplicationRecord
 
   validates :state,
             inclusion: { in: Document::STATES,
-                         message: ->(_object, data) { invalid_state_error_message(data[:value]) } }
+                         message: ->(_object, data) { invalid_state_error_message(data[:value]) }, }
 
   def self.with_last_state(state)
     order('id desc').group('document_id').having(state:)

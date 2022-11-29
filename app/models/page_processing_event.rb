@@ -6,7 +6,7 @@ class PageProcessingEvent < ApplicationRecord
 
   validates :state,
             inclusion: { in: Page::STATES,
-                         message: ->(_object, data) { invalid_state_error_message(data[:value]) } }
+                         message: ->(_object, data) { invalid_state_error_message(data[:value]) }, }
 
   def self.with_last_state(state)
     order('id desc').group('page_id').having(state:)

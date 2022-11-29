@@ -8,7 +8,7 @@ class DocumentsController < ApplicationController
     @documents = []
     if params[:query]
       PgSearch.multisearch(params[:query]).each { |result| @documents << Document.find(result.document_id) }
-      @documents.uniq
+      @documents = @documents.uniq
     else
       @documents = Document.all
     end
@@ -46,7 +46,7 @@ class DocumentsController < ApplicationController
 
   def reject_unsupported_mimetypes
     unless Document.supported_mimetypes.include?(
-      document_params[:file].content_type
+      document_params[:file].content_type,
     )
       @document = Document.new(create_params)
       flash.now.alert = t('documents.create.unsupported_mimetype')
@@ -55,14 +55,15 @@ class DocumentsController < ApplicationController
   end
 
   def document_params
-    params.require(:document).permit(%i[file])
+    params.require(:document).permit(%i[file language])
   end
 
   def create_params
     document_params.merge(
       size_bytes: document_params[:file].size,
       original_filename: document_params[:file].original_filename,
-      mimetype: document_params[:file].content_type
+      mimetype: document_params[:file].content_type,
+      language: Language.find(document_params[:language]),
     )
   end
 end

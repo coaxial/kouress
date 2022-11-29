@@ -4,6 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'AvoidDuplicateUploads' do
   let(:user) { create(:user) }
+  let!(:language) do
+    lang = create(:language)
+    ISO_639.find(lang.iso_code).english_name
+  end
 
   before do
     login user
@@ -13,6 +17,7 @@ RSpec.describe 'AvoidDuplicateUploads' do
   context 'with a PDF' do
     before do
       attach_file('File', file_fixture('p761-thompson.pdf'))
+      select(language, from: 'Language')
       click_button I18n.t('documents.form.upload')
     end
 
@@ -20,6 +25,7 @@ RSpec.describe 'AvoidDuplicateUploads' do
       # Upload the same file again
       before do
         attach_file('File', file_fixture('p761-thompson.pdf'))
+        select(language, from: 'Language')
         click_button I18n.t('documents.form.upload')
       end
 
