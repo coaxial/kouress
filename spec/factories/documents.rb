@@ -39,6 +39,10 @@ FactoryBot.define do
       transient { document_file { file_fixture('8000ad.pdf') } }
     end
 
+    trait :with_accentuated_words do
+      transient { document_file { file_fixture('accented.pdf') } }
+    end
+
     factory :document_without_embedded_text, traits: [:no_embedded_text]
     factory :single_page_document, traits: [:single_page]
     factory :multisearchable_document, traits: [:multisearchable]

@@ -8,7 +8,7 @@ RSpec.describe 'Searches', type: :system do
   end
 
   let(:user) { create :user }
-  let!(:document) { create :multisearchable_document }
+  let!(:document) { create :document, :multisearchable, :with_accentuated_words }
 
   context 'when searching for one word' do
     before do
@@ -16,23 +16,27 @@ RSpec.describe 'Searches', type: :system do
 
       visit home_path
 
-      fill_in 'query', with: 'trusting'
+      fill_in 'query', with: 'hipster'
       click_on 'Search'
     end
 
     it 'shows the matching documents' do
-      expect(page).to have_text('p761-thompson')
+      expect(page).to have_text(document.original_filename)
     end
   end
 
-  pending 'drops accents from search'
-  # it 'drops accents from search' do
-  #   visit '/'
+  context 'when spelling search term without accent' do
+    before do
+      login user
 
-  #   fill_in 'Search', with: 'Hèlló'
+      visit home_path
 
-  #   click_button 'Search'
+      fill_in 'query', with: 'pese' # "pèse" in the document
+      click_on 'Search'
+    end
 
-  #   expect(page).to have_text('hello')
-  # end
+    it 'matches accented word anyway' do
+      expect(page).to have_text(document.original_filename)
+    end
+  end
 end
