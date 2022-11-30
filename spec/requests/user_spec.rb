@@ -109,7 +109,7 @@ RSpec.describe 'Users' do
 
         patch user_path(user), params: { user: { password:,
                                                  password_confirmation:
-                                                  password } }
+                                                  password, } }
 
         expect(User.find(user.id).authenticate(password)).to be_truthy
       end
@@ -129,7 +129,7 @@ RSpec.describe 'Users' do
 
         patch user_path(user), params: { user: { password:,
                                                  password_confirmation:
-                                                  password } }
+                                                  password, } }
 
         expect(User.find(user.id).authenticate(password)).to be_truthy
       end

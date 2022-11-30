@@ -29,6 +29,7 @@ RSpec.configure do |config|
   end
 
   config.include FeatureHelper, type: :feature
+  config.include FeatureHelper, type: :system
   config.include RequestHelper, type: :request
   # TODO: clear_enqueued_jobs automatically for type: :job
   # config.include ActiveJob::TestHelper, type: :job

@@ -2,7 +2,9 @@
 
 class SiteController < ApplicationController
   def home
-    @document_upload = Document.new
+    # TODO: paginate this
+    @document = Document.new
     @documents = Document.all
+    @languages = Language.all.sort_by(&:fulltext_name)
   end
 end

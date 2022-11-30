@@ -24,6 +24,7 @@ The version is specified in `.nvmrc`, currently 16.17.1
 - Install tesseract: `apt install tesseract-ocr` (and whatever languages you need; `tesseract-ocr-deu` for instance)
 - Install poppler: `apt install libpoppler-dev poppler-utils`
 - Install postgres lib: `apt install libpq-dev`
+- Install postgres extensions: `apt install postgresql-contrib`
 
 ### Run the development server and redis
 

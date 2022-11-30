@@ -85,7 +85,7 @@ class TextExtractionJob < ApplicationJob
   # @return [Hash] the base context to be used for ApplicationError instances
   def base_context
     {
-      page:
+      page:,
     }
   end
 

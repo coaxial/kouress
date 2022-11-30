@@ -95,3 +95,7 @@ gem 'sidekiq', '~> 7.0'
 gem 'haml', '~> 6.0'
 
 gem 'rtesseract', '~> 3.1'
+
+gem 'pg_search'
+
+gem 'iso-639'

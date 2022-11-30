@@ -2,7 +2,7 @@
 
 require 'capybara/dsl'
 
-# Various helpers for feature specs
+# Various helpers for feature and system specs
 module FeatureHelper
   # See https://github.com/teamcapybara/capybara/tree/a3ff5514f40f3af0ec6655354d3596f6d9ea8964#using-the-dsl-elsewhere
   include Capybara::DSL

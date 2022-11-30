@@ -42,7 +42,7 @@ jobs:
       - name: Set up Ruby 3.1
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1
+          ruby-version: 3.1.2
           bundler-cache: true
 
       - name: Install dependencies
@@ -66,4 +66,4 @@ jobs:
       - name: Add code coverage comment
         uses: romeovs/lcov-reporter-action@v0.3.1
         with:
-          lcov-file: coverage/lcov/kouress.lcov
+          lcov-file: ./coverage/lcov/kouress.lcov

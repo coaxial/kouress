@@ -11,7 +11,7 @@ RSpec.describe 'CreateUsers' do
       Username: new_user.username,
       Email: new_user.username,
       Password: new_user.password,
-      'Password confirmation': new_user.password
+      'Password confirmation': new_user.password,
     }
   end
 

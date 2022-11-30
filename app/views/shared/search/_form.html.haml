@@ -1,0 +1,6 @@
+%h1=t('shared.search.title')
+
+= form_tag documents_path, method: :get do
+  %p
+    = search_field_tag :query,  nil,placeholder: 'Search document archive for...'
+    = submit_tag "Search", name: nil

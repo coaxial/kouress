@@ -44,6 +44,22 @@ Style/Documentation:
 Style/ClassAndModuleChildren:
   AutoCorrect: true
 
+Style/TrailingCommaInArguments:
+  AutoCorrect: true
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArrayLiteral:
+  AutoCorrect: true
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInBlockArgs:
+  AutoCorrect: true
+  Enabled: true
+
+Style/TrailingCommaInHashLiteral:
+  AutoCorrect: true
+  EnforcedStyleForMultiline: consistent_comma
+
 RSpec/DescribeClass:
   Exclude:
     - "spec/requests/**/*_spec.rb"
