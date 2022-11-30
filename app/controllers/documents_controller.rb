@@ -47,12 +47,7 @@ class DocumentsController < ApplicationController
 
   def search_for_matches
     PgSearch.multisearch(params[:query]).each do |result|
-      case result.searchable_type
-      when 'Document'
-        @documents << Document.find(result.searchable_id)
-      when 'Page'
-        @documents << Document.find(result.document_id)
-      end
+      @documents << Document.find(result.document_id)
     end
     @documents = @documents.uniq
   end
