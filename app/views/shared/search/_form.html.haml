@@ -2,7 +2,5 @@
 
 = form_tag documents_path, method: :get do
   %p
-    -# TODO: check for proper tags in Rails 7
-    -# = text_field_tag :query, params[:query]
     = search_field_tag :query,  nil,placeholder: 'Search document archive for...'
     = submit_tag "Search", name: nil
