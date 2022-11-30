@@ -1,5 +1,24 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: pages
+#
+#  id          :bigint           not null, primary key
+#  page_num    :integer          not null
+#  text        :text
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  document_id :bigint           not null
+#
+# Indexes
+#
+#  index_pages_on_document_id  (document_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (document_id => documents.id) ON DELETE => cascade
+#
 class Page < ApplicationRecord
   include PgSearch::Model
   multisearchable against: [:text],
