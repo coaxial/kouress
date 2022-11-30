@@ -1,5 +1,23 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: documents
+#
+#  id                    :bigint           not null, primary key
+#  mimetype              :string           not null
+#  original_filename     :string           not null
+#  processed_pages_count :integer          default(0), not null
+#  size_bytes            :integer          not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  language_id           :bigint
+#
+# Indexes
+#
+#  index_documents_on_language_id        (language_id)
+#  index_documents_on_original_filename  (original_filename)
+#
 class Document < ApplicationRecord
   include ActiveModel::Validations
   include PgSearch::Model
