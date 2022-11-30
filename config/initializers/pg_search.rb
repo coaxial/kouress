@@ -5,6 +5,6 @@ PgSearch.multisearch_options = {
   using: {
     # TODO: if all documents are in one language, allow for configuring that
     # language by the user and use it here.
-    tsearch: { dictionary: 'simple' },
+    tsearch: { any_word: true, dictionary: 'simple' },
   },
 }
