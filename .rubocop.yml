@@ -10,6 +10,7 @@ AllCops:
     - "db/schema.rb"
     - "node_modules/**/*"
     - "vendor/bundle/**/*" # when running on GH Actions
+    - "lib/tasks/auto_annotate_models.rake" # generated file
   NewCops: enable
   TargetRubyVersion: 3.1
 
