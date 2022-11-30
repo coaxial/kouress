@@ -62,8 +62,3 @@ jobs:
 
       - name: Run RSpec
         run: bundle exec rspec
-
-      - name: Add code coverage comment
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          lcov-file: ./coverage/lcov/kouress.lcov
