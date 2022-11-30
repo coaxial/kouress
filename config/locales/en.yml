@@ -54,6 +54,7 @@ en:
         pages:
           one: "page"
           other: "pages"
+        language: "language"
       download:
         download_file: "Download file"
       representation:
@@ -107,7 +108,7 @@ en:
       success: "Document deleted"
       failure: "Document not deleted"
     index:
-      no_docs: "No documents yet"
+      no_docs: "No documents to show"
     new:
       title: "Upload document"
     show:

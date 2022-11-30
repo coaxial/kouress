@@ -3,3 +3,5 @@
   %p= "#{t('.mimetype')}: #{document.mimetype}"
   %p= "#{t('.created')}: #{time_ago_in_words(document.created_at)} #{t('.ago')}"
   %p= "#{t('.pages.other').capitalize}: #{document.pages.count} #{t('.pages', count: document.pages.count)}"
+  -# TODO: i18n this via iso_code
+  %p= "#{t('.language').capitalize}: #{document.language.fulltext_name}"

@@ -7,8 +7,7 @@ class DocumentsController < ApplicationController
     # TODO: paginate this
     @documents = []
     if params[:query]
-      PgSearch.multisearch(params[:query]).each { |result| @documents << Document.find(result.document_id) }
-      @documents = @documents.uniq
+      search_for_matches
     else
       @documents = Document.all
     end
@@ -45,6 +44,18 @@ class DocumentsController < ApplicationController
   end
 
   private
+
+  def search_for_matches
+    PgSearch.multisearch(params[:query]).each do |result|
+      case result.searchable_type
+      when 'Document'
+        @documents << Document.find(result.searchable_id)
+      when 'Page'
+        @documents << Document.find(result.document_id)
+      end
+    end
+    @documents = @documents.uniq
+  end
 
   def reject_unsupported_mimetypes
     unless Document.supported_mimetypes.include?(
