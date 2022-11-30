@@ -68,7 +68,6 @@ group :development, :test do
   gem 'rspec-rails', '~> 6.0.0'
   gem 'rubocop-rspec'
   gem 'simplecov', require: false
-  gem 'simplecov-lcov', require: false
 end
 
 group :development do
