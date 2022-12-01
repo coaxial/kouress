@@ -11,7 +11,11 @@ RSpec.describe 'Searches', type: :system do
   end
 
   let(:user) { create :user }
-  let!(:document) { create :document, :multisearchable, :with_accentuated_words }
+  let!(:language) do
+    lang = create :language
+    ISO_639.find(lang.iso_code).english_name
+  end
+  let!(:document) { create :document, :accented, :multisearchable }
 
   context 'when searching for one word' do
     before do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_28_140948) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_01_131258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -62,7 +62,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_28_140948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "processed_pages_count", default: 0, null: false
-    t.bigint "language_id"
+    t.bigint "language_id", null: false
     t.index ["language_id"], name: "index_documents_on_language_id"
     t.index ["original_filename"], name: "index_documents_on_original_filename"
   end

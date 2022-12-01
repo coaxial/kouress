@@ -18,7 +18,6 @@
 #
 #  fk_rails_...  (document_id => documents.id) ON DELETE => cascade
 #
-# Registers events for the processing of Document
 class DocumentProcessingEvent < ApplicationRecord
   belongs_to :document
 
