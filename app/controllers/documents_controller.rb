@@ -4,13 +4,13 @@ class DocumentsController < ApplicationController
   before_action :reject_unsupported_mimetypes, only: :create
 
   def index
-    # TODO: paginate this
     @documents = []
     if params[:query]
       search_for_matches
     else
       @documents = Document.all
     end
+    @documents = @documents.order(updated_at: :desc).kpage(params[:kpage]) unless @documents.empty?
   end
 
   def new
