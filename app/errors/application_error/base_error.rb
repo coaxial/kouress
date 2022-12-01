@@ -17,7 +17,7 @@ module ApplicationError
     # @return [String] the message for that error, as defined in
     # config/locales/errors.en.yml
     def message
-      I18n.t("error.#{error_name.underscore}.message")
+      "#{I18n.t("error.#{error_name.underscore}.message")}, #{context.inspect}"
     end
 
     private
