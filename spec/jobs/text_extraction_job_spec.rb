@@ -19,7 +19,6 @@ RSpec.describe TextExtractionJob do
       let(:language) { create(:language) }
 
       context 'when there is text embedded' do
-        let(:file) { file_fixture('p761-thompson.pdf') }
         let!(:document) do
           create(:document, :page_images_generated)
           # Document.create(size_bytes: file.size, original_filename: File.basename(file), mimetype: 'application/pdf',
@@ -43,7 +42,6 @@ RSpec.describe TextExtractionJob do
       end
 
       context 'when there is no text embedded' do
-        let(:file) { file_fixture('p761-thompson.pdf') }
         let(:document) { create(:document, :no_embedded_text, :page_images_generated) }
 
         before do
@@ -66,7 +64,7 @@ RSpec.describe TextExtractionJob do
   end
 
   context 'when the job errors' do
-    let(:document) { create(:document_without_embedded_text) }
+    let(:document) { create(:document, :no_embedded_text, :page_images_generated) }
     let(:tesseract_cmd) { 'false' }
 
     before do
