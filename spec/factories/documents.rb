@@ -36,7 +36,12 @@ FactoryBot.define do
 
     trait :paginated do
       after :create do |record, evaluator|
-        create_list(:page, evaluator.pages_count, document: record)
+        create_list(:page, evaluator.pages_count, document: record) do |page, i|
+          # Page.page_num is a sequence and will keep increasing between
+          # documents. Instead, it should match the actual page number within
+          # the document.
+          page.update(page_num: i + 1)
+        end
         record.paginate
       end
     end
@@ -50,8 +55,11 @@ FactoryBot.define do
 
       after :create do |record, _evaluator|
         # create_list(:page, record.pages.count, :image_generated)
-        record.pages.each do |_page|
-          page = Page.update(attributes_for(:page, :image_generated))
+        record.pages.each do |page|
+          page_num = page.page_num
+          # override page_num with the original count because it's a sequence
+          # and will keep increasing in ever subsequent document.
+          page.update(attributes_for(:page, :image_generated, page_num:))
         end
       end
     end

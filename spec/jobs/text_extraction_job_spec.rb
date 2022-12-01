@@ -16,9 +16,16 @@ RSpec.describe TextExtractionJob do
           trust the people who wrote the software. KEN THOMPSON
         OCR
       end
+      let(:language) { create(:language) }
 
       context 'when there is text embedded' do
-        let!(:document) { create(:document) }
+        let(:file) { file_fixture('p761-thompson.pdf') }
+        let!(:document) do
+          create(:document, :page_images_generated)
+          # Document.create(size_bytes: file.size, original_filename: File.basename(file), mimetype: 'application/pdf',
+          #                 language: Language.last,)
+          # Document.last.file.attach(file)
+        end
 
         before do
           document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
@@ -36,7 +43,8 @@ RSpec.describe TextExtractionJob do
       end
 
       context 'when there is no text embedded' do
-        let(:document) { create(:document_without_embedded_text) }
+        let(:file) { file_fixture('p761-thompson.pdf') }
+        let(:document) { create(:document, :no_embedded_text, :page_images_generated) }
 
         before do
           document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }

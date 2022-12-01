@@ -13,8 +13,6 @@ RSpec.describe GeneratePageImageJob, type: :job do
     context "when the page's job succeeds" do
       before { described_class.perform_now(document.pages.first.id) }
 
-      after { FactoryBot.rewind_sequences }
-
       it "attaches the page's image" do
         expect(document.pages.first.image).to be_attached
       end
