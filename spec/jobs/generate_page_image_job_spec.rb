@@ -8,10 +8,12 @@ RSpec.describe GeneratePageImageJob, type: :job do
   after { clear_enqueued_jobs }
 
   context 'with a PDF file' do
-    let!(:document) { create(:document) }
+    let!(:document) { create(:document, :paginated) }
 
     context "when the page's job succeeds" do
       before { described_class.perform_now(document.pages.first.id) }
+
+      after { FactoryBot.rewind_sequences }
 
       it "attaches the page's image" do
         expect(document.pages.first.image).to be_attached
