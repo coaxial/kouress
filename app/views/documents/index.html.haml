@@ -1,4 +1,4 @@
 = render @documents
-= paginate @documents unless @documents.empty?
+= paginate @documents
 - if @documents.empty?
   %p= t('documents.index.no_docs')

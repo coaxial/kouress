@@ -34,7 +34,7 @@
   </table>
 </div>
 <div>
-  <%= paginate @users unless @users.empty? %>
+  <%= paginate @users %>
 </div>
 <div>
   <%= link_to t('.new'), new_user_path %>
