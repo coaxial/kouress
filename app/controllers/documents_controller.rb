@@ -31,6 +31,7 @@ class DocumentsController < ApplicationController
 
   def show
     @document = Document.find(params[:id])
+    @pages = @document.pages.order(:page_num).kpage(params[:kpage]).per(5)
   end
 
   def destroy
