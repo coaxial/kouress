@@ -25,13 +25,16 @@ FactoryBot.define do
     sequence(:page_num) { |n| n }
 
     trait :image_generated do
-      after :create do |record, _evaluator|
+      after :build do |record, _evaluator|
         filename = "#{File.basename(record.document.original_filename, '.pdf')}-#{record.page_num}.png"
 
         record.image.attach(
           io: file_fixture(filename).open,
           filename:,
         )
+      end
+
+      after :create do |record, _evaluator|
         record.image_generated
       end
     end

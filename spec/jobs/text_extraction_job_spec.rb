@@ -27,7 +27,7 @@ RSpec.describe TextExtractionJob do
         end
 
         before do
-          document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
+          # document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
           described_class.perform_now(document.pages.first.id)
           document.reload
         end
@@ -45,7 +45,8 @@ RSpec.describe TextExtractionJob do
         let(:document) { create(:document, :no_embedded_text, :page_images_generated) }
 
         before do
-          document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
+          # document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
+          document.reload
           raise 'Page image attachment missing' unless document.pages.first.image.attached?
 
           described_class.perform_now(document.pages.first.id)
@@ -68,7 +69,8 @@ RSpec.describe TextExtractionJob do
     let(:tesseract_cmd) { 'false' }
 
     before do
-      document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
+      # document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
+      document.reload
       raise 'Page image attachment missing' unless document.pages.first.image.attached?
 
       begin

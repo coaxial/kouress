@@ -59,7 +59,8 @@ FactoryBot.define do
           page_num = page.page_num
           # override page_num with the original count because it's a sequence
           # and will keep increasing in ever subsequent document.
-          page.update(attributes_for(:page, :image_generated, page_num:))
+          page.destroy
+          create(:page, :image_generated, page_num:, document: record)
         end
       end
     end
