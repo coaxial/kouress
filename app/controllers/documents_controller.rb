@@ -4,13 +4,13 @@ class DocumentsController < ApplicationController
   before_action :reject_unsupported_mimetypes, only: :create
 
   def index
-    # TODO: paginate this
-    @documents = []
-    if params[:query]
-      search_for_matches
-    else
-      @documents = Document.all
-    end
+    # Using lambdas so that the database is only queried once when ordering
+    documents = if params[:query]
+                  -> { search_results }
+                else
+                  -> { Document.all }
+                end
+    @documents = documents.call.order(updated_at: :desc).kpage(params[:kpage])
   end
 
   def new
@@ -31,6 +31,7 @@ class DocumentsController < ApplicationController
 
   def show
     @document = Document.find(params[:id])
+    @pages = @document.pages.order(:page_num).kpage(params[:kpage]).per(5)
   end
 
   def destroy
@@ -45,11 +46,15 @@ class DocumentsController < ApplicationController
 
   private
 
-  def search_for_matches
-    PgSearch.multisearch(params[:query]).each do |result|
-      @documents << Document.find(result.document_id)
-    end
-    @documents = @documents.uniq
+  # @return [ActiveRecord::Relation] the matching documents
+  def search_results
+    # There will be duplicates, from page matches (i.e. multiple pages in the
+    # same document) so filter out duplicate document_ids before loading them.
+    matching_document_ids = PgSearch.multisearch(params[:query]).map(&:document_id).uniq
+    # .find(Array) returns an Array instead of an ActiveRecord::Relation which
+    # breaks the rest of the controller because it's lacking things like
+    # #order, #kpage, etc.
+    Document.where(id: matching_document_ids)
   end
 
   def reject_unsupported_mimetypes
