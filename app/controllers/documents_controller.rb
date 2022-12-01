@@ -47,10 +47,13 @@ class DocumentsController < ApplicationController
   private
 
   def search_for_matches
-    PgSearch.multisearch(params[:query]).each do |result|
-      @documents << Document.find(result.document_id)
-    end
-    @documents = @documents.uniq
+    # There will be duplicates, from page matches (i.e. multiple pages in the
+    # same document) so filter out duplicate document_ids before loading them.
+    matching_document_ids = PgSearch.multisearch(params[:query]).map(&:document_id).uniq
+    # .find(Array) returns an Array instead of an ActiveRecord::Relation which
+    # breaks the rest of the controller because it's lacking things like
+    # #order, #kpage, etc.
+    @documents = Document.where(id: matching_document_ids)
   end
 
   def reject_unsupported_mimetypes
