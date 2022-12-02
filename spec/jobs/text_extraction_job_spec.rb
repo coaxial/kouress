@@ -21,15 +21,11 @@ RSpec.describe TextExtractionJob do
       context 'when there is text embedded' do
         let!(:document) do
           create(:document, :page_images_generated)
-          # Document.create(size_bytes: file.size, original_filename: File.basename(file), mimetype: 'application/pdf',
-          #                 language: Language.last,)
-          # Document.last.file.attach(file)
         end
 
         before do
-          # document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
-          described_class.perform_now(document.pages.first.id)
           document.reload
+          described_class.perform_now(document.pages.first.id)
         end
 
         it 'extracts the text' do
@@ -45,12 +41,8 @@ RSpec.describe TextExtractionJob do
         let(:document) { create(:document, :no_embedded_text, :page_images_generated) }
 
         before do
-          # document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
           document.reload
-          raise 'Page image attachment missing' unless document.pages.first.image.attached?
-
           described_class.perform_now(document.pages.first.id)
-          document.reload
         end
 
         it 'extracts the text' do
@@ -69,16 +61,11 @@ RSpec.describe TextExtractionJob do
     let(:tesseract_cmd) { 'false' }
 
     before do
-      # document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
       document.reload
-      raise 'Page image attachment missing' unless document.pages.first.image.attached?
-
-      begin
-        described_class.perform_now(document.pages.first.id, tesseract_cmd)
-        # This is intentional, the job is meant to fail because tesseract_cmd
-        # is `false` which will always exit 1.
-      rescue StandardError # rubocop:disable Lint/SuppressedException
-      end
+      described_class.perform_now(document.pages.first.id, tesseract_cmd)
+    # This is intentional, the job is meant to fail because tesseract_cmd
+    # is `false` which will always exit 1.
+    rescue StandardError # rubocop:disable Lint/SuppressedException
     end
 
     it 'changes state to failed' do
