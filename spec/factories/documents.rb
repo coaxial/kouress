@@ -54,13 +54,36 @@ FactoryBot.define do
       paginated
 
       after :create do |record, _evaluator|
-        # create_list(:page, record.pages.count, :image_generated)
         record.pages.each do |page|
-          page_num = page.page_num
-          # override page_num with the original count because it's a sequence
-          # and will keep increasing in ever subsequent document.
-          page.destroy
-          create(:page, :image_generated, page_num:, document: record)
+          # Alright, this sucks: to use the :image_generated trait from the
+          # :page factory, we have to delete the current page and replace it
+          # with a new one. This is because there is no way to update the
+          # existing page from a FactoryBot.{create,update}.
+          # FactoryBot.attributes_for doesn't work either, because it skips
+          # the necessary callbacks to run side effects (update
+          # PageProcessingEvent, attach image, etc.)
+          #
+          # Once the new page is created, we have to update its ID in the
+          # PageProcessingEvent entries, otherwise current_state will be
+          # "unprocessed"
+          old_page = page
+          new_page = create(:page, :image_generated, page_num: old_page.page_num, document: old_page.document)
+          update_page_in_events(old_page_id: old_page.id, new_page_id: new_page.id)
+          old_page.destroy
+          puts "****************** #{[old_page.id, new_page.id, Page.count]}"
+          # PageProcessingEvent.where(page_id: old_page.id).update(page_id: new_page.id)
+
+          # How to replace existing pages with image_generated pages??
+
+          # # create_list(:page, record.pages.count, :image_generated)
+          # record.pages.each do |page|
+          #   page_num = page.page_num
+          #   page_id = page.id
+          #   debugger
+          #   # override page_num with the original count because it's a sequence
+          #   # and will keep increasing in ever subsequent document.
+          #   page.destroy
+          #   create(:page, :image_generated, page_num:, document: record, id: page_id)
         end
       end
     end
@@ -69,9 +92,21 @@ FactoryBot.define do
       page_images_generated
 
       after :create do |record, _evaluator|
+        record.reload
         record.pages.each do |page|
-          page.text = "This is the mock text content for page #{page.page_num}"
-          page.text_extracted
+          old_page = page
+          new_page = create(:page, :text_extracted, page_num: old_page.page_num, document: old_page.document)
+          update_page_in_events(old_page_id: old_page.id, new_page_id: new_page.id)
+          old_page.destroy
+          #     puts "***************************** #{page.id}"
+          #     page_num = page.page_num
+          #     page_id = page.id
+          #     page.destroy
+          #     page = create(:page, :text_extracted, page_num:, id: page_id, document: record)
+          #     page.reload
+          #     puts "***************************** #{page.id}"
+          #     # attributes = attributes_for(:page, :text_extracted)
+          #     # page.update(attributes)
         end
       end
     end
@@ -121,4 +156,10 @@ FactoryBot.define do
     factory :document_without_embedded_text, traits: %i[no_embedded_text multisearchable]
     factory :single_page_document, traits: %i[single_page multisearchable]
   end
+end
+
+private
+
+def update_page_in_events(old_page_id:, new_page_id:)
+  PageProcessingEvent.where(page_id: old_page_id).update(page_id: new_page_id)
 end

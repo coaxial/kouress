@@ -4,15 +4,25 @@ require 'rails_helper'
 
 RSpec.describe UpdateStateForPageJob, type: :job do
   context 'when not all pages have been processed' do
-    let(:page) { create(:page_with_text_extracted) }
+    let(:document) { create(:document, :pages_text_extracted) }
+    let(:page) { document.pages.first }
 
-    before { described_class.perform_now(page.id) }
+    before do
+      document.reload
+      # page = document.pages.first
+      page.reload
+      described_class.perform_now(page.id)
+      page.reload
+    end
 
-    it 'sets page state to processed' do
+    it 'sets page state to processed', :focus do
+      page.reload
       expect(page).to be_processed
     end
 
     it "doesn't set document state to processed" do
+      page = document.pages.first
+      page.reload
       expect(page.document).not_to be_processed
     end
   end

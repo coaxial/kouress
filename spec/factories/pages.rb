@@ -35,15 +35,19 @@ FactoryBot.define do
       end
 
       after :create do |record, _evaluator|
+        puts 'hellllooooooooooooooooooooooooooo'
         record.image_generated
       end
     end
 
     trait :text_extracted do
-      text { 'Some mock text' }
-
+      image_generated
+      # text { "This is the mock text for page #{page_num}" }
       after :create do |record, _evaluator|
+        record.update(text: "This is the mock text for page #{record.page_num}")
         record.text_extracted
+        # record.reload
+        puts "************************** #{record.id}: #{record.current_state}"
       end
     end
 
