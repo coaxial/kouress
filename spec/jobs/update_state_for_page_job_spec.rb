@@ -15,26 +15,27 @@ RSpec.describe UpdateStateForPageJob, type: :job do
       page.reload
     end
 
-    it 'sets page state to processed', :focus do
-      page.reload
+    it 'sets page state to processed' do
+      # page.reload
       expect(page).to be_processed
     end
 
     it "doesn't set document state to processed" do
-      page = document.pages.first
-      page.reload
+      # page = document.pages.first
+      document.reload
       expect(page.document).not_to be_processed
     end
   end
 
   context 'when all pages have been processed' do
-    let(:document) { create(:single_page_document) }
+    let(:document) { create(:document, :single_page, :pages_text_extracted) }
 
     before do
-      document.pages.first.update(text: 'Some mock text')
-      document.pages.first.image_generated
-      document.pages.first.text_extracted
+      # document.pages.first.update(text: 'Some mock text')
+      # document.pages.first.image_generated
+      # document.pages.first.text_extracted
 
+      document.reload
       described_class.perform_now(document.pages.first.id)
     end
 
@@ -46,7 +47,10 @@ RSpec.describe UpdateStateForPageJob, type: :job do
   context 'when attempting to process a page in the wrong state' do
     let(:document) { create(:single_page_document) }
 
-    before { described_class.perform_now(document.pages.first.id) }
+    before do
+      described_class.perform_now(document.pages.first.id)
+      document.reload
+    end
 
     it "doesn't process the page" do
       expect(document.pages.first).not_to be_processed

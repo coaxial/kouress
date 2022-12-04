@@ -92,7 +92,7 @@ FactoryBot.define do
       page_images_generated
 
       after :create do |record, _evaluator|
-        record.reload
+        record.reload # Avoids duplicate, ghost pages!
         record.pages.each do |page|
           old_page = page
           new_page = create(:page, :text_extracted, page_num: old_page.page_num, document: old_page.document)
@@ -154,7 +154,7 @@ FactoryBot.define do
     end
 
     factory :document_without_embedded_text, traits: %i[no_embedded_text multisearchable]
-    factory :single_page_document, traits: %i[single_page multisearchable]
+    factory :single_page_document, traits: %i[single_page paginated]
   end
 end
 
