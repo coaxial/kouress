@@ -24,12 +24,11 @@ class DocumentsAnalysisJob < ApplicationJob
     ActiveStorage::Blob.service.path_for(document.file.key)
   end
 
-  def handle_job_failure(step, context = nil)
-    document.fail
-    msg = "error running #{step}"
-    msg << ": #{context.inspect}" if context
+  def handle_job_failure(additional_context = {})
+    context = base_context.merge(additional_context)
 
-    raise msg
+    document.fail
+    raise ApplicationError::SaveFailure.new(context:)
   end
 
   def create_pages
@@ -37,7 +36,11 @@ class DocumentsAnalysisJob < ApplicationJob
 
     reader.pages.each do |pdf_page|
       page = Page.new(document:, page_num: pdf_page.number, text: nil)
-      handle_job_failure('analysis', { document:, page: }) unless page.save
+      handle_job_failure unless page.save
     end
+  end
+
+  def base_context
+    { document: }
   end
 end
