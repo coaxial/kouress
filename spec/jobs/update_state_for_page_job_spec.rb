@@ -38,6 +38,7 @@ RSpec.describe UpdateStateForPageJob, type: :job do
     let(:document) { create(:single_page_document) }
 
     before do
+      document.reload
       described_class.perform_now(document.pages.first.id)
     end
 
