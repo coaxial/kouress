@@ -6,12 +6,15 @@ RSpec.describe 'Searches', type: :system do
   before do
     driven_by(:rack_test)
 
+    lang = create :language
+    ISO_639.find(lang.iso_code).english_name
+
     login user
     visit home_path
   end
 
   let(:user) { create :user }
-  let!(:document) { create :document, :multisearchable, :with_accentuated_words }
+  let!(:document) { create :document, :accented, :multisearchable }
 
   context 'when searching for one word' do
     before do

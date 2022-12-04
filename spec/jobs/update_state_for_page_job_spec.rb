@@ -4,9 +4,13 @@ require 'rails_helper'
 
 RSpec.describe UpdateStateForPageJob, type: :job do
   context 'when not all pages have been processed' do
-    let(:page) { create(:page_with_text_extracted) }
+    let(:document) { create(:document, :pages_text_extracted) }
+    let(:page) { document.pages.first }
 
-    before { described_class.perform_now(page.id) }
+    before do
+      document.reload
+      described_class.perform_now(page.id)
+    end
 
     it 'sets page state to processed' do
       expect(page).to be_processed
@@ -18,13 +22,10 @@ RSpec.describe UpdateStateForPageJob, type: :job do
   end
 
   context 'when all pages have been processed' do
-    let(:document) { create(:single_page_document) }
+    let(:document) { create(:document, :single_page, :pages_text_extracted) }
 
     before do
-      document.pages.first.update(text: 'Some mock text')
-      document.pages.first.image_generated
-      document.pages.first.text_extracted
-
+      document.reload
       described_class.perform_now(document.pages.first.id)
     end
 
@@ -36,7 +37,10 @@ RSpec.describe UpdateStateForPageJob, type: :job do
   context 'when attempting to process a page in the wrong state' do
     let(:document) { create(:single_page_document) }
 
-    before { described_class.perform_now(document.pages.first.id) }
+    before do
+      document.reload
+      described_class.perform_now(document.pages.first.id)
+    end
 
     it "doesn't process the page" do
       expect(document.pages.first).not_to be_processed

@@ -18,12 +18,11 @@ RSpec.describe TextExtractionJob do
       end
 
       context 'when there is text embedded' do
-        let!(:document) { create(:document) }
+        let(:document) { create(:document, :page_images_generated) }
 
         before do
-          document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
-          described_class.perform_now(document.pages.first.id)
           document.reload
+          described_class.perform_now(document.pages.first.id)
         end
 
         it 'extracts the text' do
@@ -36,20 +35,19 @@ RSpec.describe TextExtractionJob do
       end
 
       context 'when there is no text embedded' do
-        let(:document) { create(:document_without_embedded_text) }
+        let(:document) { create(:document, :no_embedded_text, :page_images_generated) }
 
         before do
-          document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
-          raise 'Page image attachment missing' unless document.pages.first.image.attached?
-
-          described_class.perform_now(document.pages.first.id)
           document.reload
+          described_class.perform_now(document.pages.first.id)
         end
 
+        # This is slow because it's running tesseract for real.
         it 'extracts the text' do
           expect(document.pages.first.text.squish).to include(text)
         end
 
+        # This is slow because it's running tesseract for real.
         it 'changes state to text_extracted' do
           expect(document.pages.first).to be_text_extracted
         end
@@ -58,19 +56,15 @@ RSpec.describe TextExtractionJob do
   end
 
   context 'when the job errors' do
-    let(:document) { create(:document_without_embedded_text) }
+    let(:document) { create(:document, :no_embedded_text, :page_images_generated) }
     let(:tesseract_cmd) { 'false' }
 
     before do
-      document.pages.each { |page| GeneratePageImageJob.perform_now(page.id) }
-      raise 'Page image attachment missing' unless document.pages.first.image.attached?
-
-      begin
-        described_class.perform_now(document.pages.first.id, tesseract_cmd)
-        # This is intentional, the job is meant to fail because tesseract_cmd
-        # is `false` which will always exit 1.
-      rescue StandardError # rubocop:disable Lint/SuppressedException
-      end
+      document.reload
+      described_class.perform_now(document.pages.first.id, tesseract_cmd)
+    # This is intentional, the job is meant to fail because tesseract_cmd
+    # is `false` which will always exit 1.
+    rescue StandardError # rubocop:disable Lint/SuppressedException
     end
 
     it 'changes state to failed' do

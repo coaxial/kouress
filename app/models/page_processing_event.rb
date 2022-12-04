@@ -18,7 +18,6 @@
 #
 #  fk_rails_...  (page_id => pages.id) ON DELETE => cascade
 #
-# Registers events for the processing of Page
 class PageProcessingEvent < ApplicationRecord
   belongs_to :page
 
