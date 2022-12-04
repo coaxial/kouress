@@ -54,37 +54,8 @@ FactoryBot.define do
       paginated
 
       after :create do |record, _evaluator|
-        record.pages.each do |page|
-          # Alright, this sucks: to use the :image_generated trait from the
-          # :page factory, we have to delete the current page and replace it
-          # with a new one. This is because there is no way to update the
-          # existing page from a FactoryBot.{create,update}.
-          # FactoryBot.attributes_for doesn't work either, because it skips
-          # the necessary callbacks to run side effects (update
-          # PageProcessingEvent, attach image, etc.)
-          #
-          # Once the new page is created, we have to update its ID in the
-          # PageProcessingEvent entries, otherwise current_state will be
-          # "unprocessed"
-          old_page = page
-          new_page = create(:page, :image_generated, page_num: old_page.page_num, document: old_page.document)
-          update_page_in_events(old_page_id: old_page.id, new_page_id: new_page.id)
-          old_page.destroy
-          puts "****************** #{[old_page.id, new_page.id, Page.count]}"
-          # PageProcessingEvent.where(page_id: old_page.id).update(page_id: new_page.id)
-
-          # How to replace existing pages with image_generated pages??
-
-          # # create_list(:page, record.pages.count, :image_generated)
-          # record.pages.each do |page|
-          #   page_num = page.page_num
-          #   page_id = page.id
-          #   debugger
-          #   # override page_num with the original count because it's a sequence
-          #   # and will keep increasing in ever subsequent document.
-          #   page.destroy
-          #   create(:page, :image_generated, page_num:, document: record, id: page_id)
-        end
+        record.reload # Avoids duplicate, ghost pages!
+        record.pages.each { |page| transition_page_to_state(state: :image_generated, page:) }
       end
     end
 
@@ -94,19 +65,7 @@ FactoryBot.define do
       after :create do |record, _evaluator|
         record.reload # Avoids duplicate, ghost pages!
         record.pages.each do |page|
-          old_page = page
-          new_page = create(:page, :text_extracted, page_num: old_page.page_num, document: old_page.document)
-          update_page_in_events(old_page_id: old_page.id, new_page_id: new_page.id)
-          old_page.destroy
-          #     puts "***************************** #{page.id}"
-          #     page_num = page.page_num
-          #     page_id = page.id
-          #     page.destroy
-          #     page = create(:page, :text_extracted, page_num:, id: page_id, document: record)
-          #     page.reload
-          #     puts "***************************** #{page.id}"
-          #     # attributes = attributes_for(:page, :text_extracted)
-          #     # page.update(attributes)
+          transition_page_to_state(state: :text_extracted, page:)
         end
       end
     end
@@ -162,4 +121,22 @@ private
 
 def update_page_in_events(old_page_id:, new_page_id:)
   PageProcessingEvent.where(page_id: old_page_id).update(page_id: new_page_id)
+end
+
+def transition_page_to_state(page:, state: page_state)
+  # Alright, this sucks: to use the :image_generated trait from the
+  # :page factory, we have to delete the current page and replace it
+  # with a new one. This is because there is no way to update the
+  # existing page from a FactoryBot.{create,update}.
+  # FactoryBot.attributes_for doesn't work either, because it skips
+  # the necessary callbacks to run side effects (update
+  # PageProcessingEvent, attach image, etc.)
+  #
+  # Once the new page is created, we have to update its ID in the
+  # PageProcessingEvent entries, otherwise current_state will be
+  # "unprocessed"
+  old_page = page
+  new_page = create(:page, state, page_num: old_page.page_num, document: old_page.document)
+  update_page_in_events(old_page_id: old_page.id, new_page_id: new_page.id)
+  old_page.destroy
 end
