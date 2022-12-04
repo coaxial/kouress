@@ -16,7 +16,6 @@ RSpec.describe TextExtractionJob do
           trust the people who wrote the software. KEN THOMPSON
         OCR
       end
-      let(:language) { create(:language) }
 
       context 'when there is text embedded' do
         let!(:document) do
