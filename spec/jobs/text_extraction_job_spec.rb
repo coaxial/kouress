@@ -18,9 +18,7 @@ RSpec.describe TextExtractionJob do
       end
 
       context 'when there is text embedded' do
-        let!(:document) do
-          create(:document, :page_images_generated)
-        end
+        let(:document) { create(:document, :page_images_generated) }
 
         before do
           document.reload
