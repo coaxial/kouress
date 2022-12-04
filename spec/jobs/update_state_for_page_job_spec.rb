@@ -9,20 +9,14 @@ RSpec.describe UpdateStateForPageJob, type: :job do
 
     before do
       document.reload
-      # page = document.pages.first
-      page.reload
       described_class.perform_now(page.id)
-      page.reload
     end
 
     it 'sets page state to processed' do
-      # page.reload
       expect(page).to be_processed
     end
 
     it "doesn't set document state to processed" do
-      # page = document.pages.first
-      document.reload
       expect(page.document).not_to be_processed
     end
   end
@@ -31,10 +25,6 @@ RSpec.describe UpdateStateForPageJob, type: :job do
     let(:document) { create(:document, :single_page, :pages_text_extracted) }
 
     before do
-      # document.pages.first.update(text: 'Some mock text')
-      # document.pages.first.image_generated
-      # document.pages.first.text_extracted
-
       document.reload
       described_class.perform_now(document.pages.first.id)
     end
@@ -49,7 +39,6 @@ RSpec.describe UpdateStateForPageJob, type: :job do
 
     before do
       described_class.perform_now(document.pages.first.id)
-      document.reload
     end
 
     it "doesn't process the page" do
