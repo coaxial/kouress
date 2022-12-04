@@ -15,5 +15,6 @@
 #
 FactoryBot.define do
   factory :language do
+    iso_code { 'eng' }
   end
 end
