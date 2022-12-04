@@ -46,6 +46,10 @@ end
 
 Sidekiq's console is at `/sidekiq` (disabled outside of the development env)
 
+### Find slow tests
+
+`$ rspec spec -f TimeFormatter` will show slow tests in yellow and red.
+
 ## Deployment
 
 ### Postgres
