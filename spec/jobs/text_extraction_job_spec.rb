@@ -45,10 +45,12 @@ RSpec.describe TextExtractionJob do
           described_class.perform_now(document.pages.first.id)
         end
 
+        # This is slow because it's running tesseract for real.
         it 'extracts the text' do
           expect(document.pages.first.text.squish).to include(text)
         end
 
+        # This is slow because it's running tesseract for real.
         it 'changes state to text_extracted' do
           expect(document.pages.first).to be_text_extracted
         end
